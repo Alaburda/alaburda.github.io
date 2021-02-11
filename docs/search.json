@@ -1,0 +1,20 @@
+{
+  "articles": [
+    {
+      "path": "about.html",
+      "title": "About this blog",
+      "description": "Some additional details about the blog",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2021-02-12T00:18:50+02:00"
+    },
+    {
+      "path": "index.html",
+      "title": "Blogai",
+      "author": [],
+      "contents": "\r\n\r\n\r\n\r\n",
+      "last_modified": "2021-02-12T00:18:52+02:00"
+    }
+  ],
+  "collections": ["posts/posts.json"]
+}
