@@ -1,0 +1,136 @@
+---
+title: "Mėgstamiausi dalykai Kalėdos"
+description: |
+  Ką pirkti kitiems žmonėms.
+date: 02-26-2021
+output:
+  distill::distill_article:
+    self_contained: false
+    toc: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Po 2019 m. Kalėdų nusprendžiau sekti įdomias galimas dovanas. Kai reikia ką nors dovanoti - nebūtinai Kalėdoms, kad ir gimtadienio proga - dažnai pasimetu, todėl toks sąrašas padeda greitai suprasti, kas žmogų pradžiugintų. Manau, jog toks sąrašas galėtų būti naudingas ir kitiems, todėl jį laikau čia. Žinoma, kiekvienas žino savo artimąjį geriausiai - sąrašas žemiau yra tik gidas. Smagaus naršymo!
+
+# Knygos
+
+## Leidyklos
+
+1. [And Other Stories](https://www.andotherstories.org/subscriptions/) - nepriklausoma leidykla, siūlanti prenumeratą. Prenumeratoriai periodiškai gauna knygą, o kiekvienos knygos gale yra prenumeratorių sąrašas, įskaitant ir tavo ar gavėjo! Jų knygų pasirinkimas neblogas ir periodiškai vertas dėmesio. Kaina priklauso nuo prenumeratos dydžio.
+1. [RARA leidykla](https://raraleidykla.lt/) - anksčiau nebūčiau jų nurodęs, bet jie siūlo įsigyti visas ateinančių metų knygas iš anksto, todėl kaip ir __And Other Stories__, tai yra smagi staigmena knygų mylėtojui. Jeigu __Kitos knygos__ orientuojasi į anglų kalba išėjusių knygų topus, __RARA__ pasirinkimas orientuotas į modernią literatūrą, kuriai seniai reikėjo vertimo į lietuvių kalbą.
+2. [New Eastern Europe](https://neweasterneurope.eu/subscribe/) - politinis žurnalas, orientuotas į Rytų Europą. Straipsnių kokybė iki šiol buvo gera ir pats žurnalas yra patogaus storo A5 formato, todėl tai galėtų būti per daug vietos neužimanti dovana.
+3. [Phaidon](https://uk.phaidon.com/store/) - jų pasirinkime yra visko (skaityti: rinktis atsargiai!), bet kai kurios knygos yra spausdintos labai konkretiems žmonėms. Pavyzdžiui, gydytojui arba medicinos studentui ideali dovana galėtų būti [Anatomy book](https://uk.phaidon.com/store/general-non-fiction/anatomy-exploring-the-human-body-9780714879888/).
+4. [Taschen](https://www.taschen.com/) - Taschen riečia nosį daugiau negu Phaidon vien žiūrint į jų kainas, bet Taschen dažnai siūlo savo knygas stambiais bei mažais (A5?) formatais. Mažo formato knygos yra įperkamos ir gali būti miela dovana ant kavos staliuko. Aš pats turiu [Soviet archtecture](https://www.taschen.com/pages/en/catalogue/architecture/all/49365/facts.frederic_chaubin_cccp.htm), kurią buvo įdomu pavartyti. Taip pat rekomenduoju knygą apie [gamtos istoriją](https://www.taschen.com/pages/en/catalogue/classics/all/05420/facts.seba_cabinet_of_natural_curiosities.htm).
+5. [Stripe Press](https://press.stripe.com/) - prieinama tik JAV, knygos šiek tiek pretenzingos, bet pačių knygų kokybė yra viena geriausių, kokias teko matyti. Temos orientuotos į ekonomiką, progresą bei technologijas, bet jos paliečia labai įdomias temas. 
+6. [Fantagraphics](https://www.fantagraphics.com/) - Black Friday nuolaidos neblogos, bet ašaroja akys nuo tiesioginio siuntimo į EU, todėl reikia žiūrėti į Amazon pasirinkimą. Leidyklos pasirinkimas man patinka - jie išleido __My Favourite Thing is Monsters__!
+
+## Konkrečios knygos
+
+1. Iliustruotos knygos - iliustruotos knygos neįpareigoja skaityti, o tiesiog gerėtis, todėl tai nėra sąžinę graužianti dovana kaip įprasta knyga. Iš pirmo žvilgsnio man patiko [Spineless](https://www.amazon.com/Spineless-Portraits-Marine-Invertebrates-Backbone/dp/1419710079/) ir [Seeking Leviathan](https://cswannphotography.com/book/).
+2. Kulinarinės knygos - labai nuvertinta dovana, juolab kad dabar yra labai stiprus jų pasirinkimas. Bendrai, kiekvienais metais verta patikrinti [James Beard apdovanojimus](https://www.jamesbeard.org/blog/this-years-best-cookbooks). Aš pats rekomenduočiau [the Food of Sichuan](https://www.amazon.co.uk/Food-Sichuan-Fuchsia-Dunlop/dp/1408867559), labai girtą [Salt, Fat, Acid, Heat](https://www.amazon.co.uk/Salt-Fat-Acid-Heat-Mastering/dp/1782112308/)[^1] ir [The Last Course](https://www.amazon.co.uk/dp/037550429X/) arba [Sababa](https://www.amazon.co.uk/dp/0525533451/).
+
+[^1]: Amerikietiškas leidimas yra ŽYMIAI geresnis už europietišką leidimą.
+
+# Stalo žaidimai
+
+## Lengvi žaidimai
+
+1. [Codenames](https://boardgamegeek.com/boardgame/178900/codenames) - lietuviškas originalus variantas yra geriausias.
+2. [Similo](https://boardgamegeek.com/boardgame/268620/similo) - mažesnis ir, mano manymu, pralenkia Dixit
+3. Ice Cool
+4. Rhino Hero Super Battle
+
+## Žaidėjų žaidimai
+
+1. Wingspan - atrodo puikiai ant stalo, smagu žaisti ir grožėtis, ko daugiau norėti?
+2. Azul - lengvesnis negu Wingspan, bet universalesnis ir pigesnis.
+
+## Komponentų pagerinimai
+
+Stalo žaidimą galima pagerinti 3 būdams: pridėti stalo žaidimo papildymą, pridėti įmautes arba pagerinti komponentus. Pirmais dviem atvejais nustebinti žmogų sudėtinga, bet pagerinimai yra tai, ko kiekvienas nori, bet nebūtinai ryžtųsi sumokėti.
+
+1. [BGG Store](https://boardgamegeekstore.com/)
+2. [Spiele Material](https://www.spielematerial.de/en/)
+2. [MeepleSource](https://www.meeplesource.com/proddetail.php?prod=WingspanUpgrade)
+3. Taip pat galima internete rasti 3D modelius nemokamai (pavyzdžiui, Terraforming Mars lenteles), ir juos išspausdinti.
+3. Etsy ;)
+4. Šiems žaidimams leidėjai patys leidžia geresnius komponentus: [Scythe](https://stonemaier-games.myshopify.com/products/metal-coins-scythe-asia?variant=25456101190), [7 Wonders](https://shop.rprod.com/en/7-wonders-duel/52-7-wonders-duel-metal-coins.html), [Azul](https://www.nextmovegames.com/en/home/31-azul-joker-tiles.html)
+
+## Aksesuarai
+
+1. [Pirmo žaidėjo parinkėjas](https://www.amazon.co.uk/Ddfly-Shocking-Roulette-Detector-Reloaded/dp/B07G9H2QG8/)
+2. [Kauliukų dubenėliai](https://www.deepcutstudio.com/product/dice-tray-bard/)
+
+## Knygos
+
+* The Art of Game Design: A Book of Lenses, Jesse Schell
+* Gamish: A Graphic History of Gaming, Edward Ross
+* How to Host A Game Night, Erik Arneson
+* Dice Games Properly Explained, Reiner Knizia
+* Tabletop Gaming Manual, Matt Thrower
+* Playing at the World, Jon Peterson
+* Gametek: The Math and Science of Gaming, Geoff Engelstein
+* Building Blocks of Tabletop Game Design: An Encyclopedia of Mechanisms, Geoffrey Engelstein and Isaac Shalev
+* Finite and Infinite Games, James P. Carse
+* Homo Ludens, Johan Huizinga
+* Rules of Play: Game Design Fundamentals, Katie Salen Tekinbas and Eric Zimmerman
+
+# Valgoma
+
+1. Chocolate - David Siegel has a wonderful [guide](https://medium.com/@pullnews/david-siegels-chocolate-porn-156f648a69ab). I will be sure to try it out next year! Amedei has their e-shop in Italy with wonderful discounts during Black Friday.
+2. Coffee and tea - for tea, I would probably check out [eteaket](https://www.eteaket.co.uk/). For coffee, I would either go for a local roaster (in my case, it's Huracan Coffee) but there is wonderful list on [Reddit here](https://www.reddit.com/r/Coffee/comments/9272cl/where_to_buy_roasted_coffee_beans_in_europe/).
+5. [Miracle Berries](https://www.amazon.com/MiralandBerry-Miracle-Fruit-Tablets-Berry) - miraculin makes everything sour taste sweet. No side effects. Have fun!
+6. Balsamic Vinegar - so apparently the good stuff is aged for 10-15 years and is actually different from store brought varieties. A bottle can run up to 30 Euros or more. MiaBella is a supposedly good brand.
+1. Aštrus padažas
+
+# Dėvima
+
+3. Socks - I know, they are not consumables but they do wear out and get lost! Exactly the reason why gifting socks is a good idea - eventually your friend is going to run out and will need a pair. There's [Darn Tough](https://darntough.com/collections/men) for hikers, [Gammarelli](https://www.meschaussettesrouges.com/en/3_gammarelli) or [Marcoliani](https://www.marcoliani.it/en/distribution/) to show what a classy friend you are, [Stance](https://euro.stance.eu.com/) for the mid tier pricing, and [Anonymous Ism](https://anonymousism.com/) if you think your friend will like linen Japanese socks.
+4. Ties - [Daboti](https://www.daboti.lt/) has excellent Lithuanian ties.
+
+# Virtuvėje
+
+1. Literally anything from [Iittala](https://www.iittala.com/collections/iittala/tools/c/tools/intro) - this is an _expensive_ option but we are talking about items that will last for a long time.
+2. High end knives - [Mr. Siegel](https://medium.com/@pullnews/david-siegels-knife-porn-ea19f8553e79?) and [ChefSteps](https://www.chefsteps.com/activities/the-chefsteps-kitchen-team-shares-their-favorite-knives) have great guides. Again, this is a costly gift but one that will last a lifetime.
+3. Food thermometers - underrated.
+4. Wine bottle caps - I brought back a pair for myself but apparently my family wanted some for themselves after having seen them!
+5. Mandoline - yes, there are cheap ones out there but what you really want is a mandoline from [Benriner](https://www.amazon.co.uk/s?k=mandoline+benriner&ref=nb_sb_noss).
+6. [Articture](https://articture.com/) for other ideas. 
+
+# Dekoras
+
+1. Georg Jansen Christmas ornaments - [these](https://www.georgjensen.com/global/christmas/scandinavian-christmas-decorations) are especially effective if you are exchanging gifts before Christmas but I would recommend them nonetheless. They are darn beautiful on a tree!
+2. [Nordic Nest](https://www.nordicnest.com/) for other ideas.
+
+# Elektronika
+
+1. [Tile](https://www.thetileapp.com/en-eu/) - sure, they go on the more expensive side when it comes to gifts but it's great for a friend who keeps misplacing their stuff or is about to move to another city or wants to feel secure.
+2. [A mini box cutter](https://www.amazon.com/dp/B00M1XZXGU) - cheap and supposedly cuts better than your standard box cutter.
+3. Large mousepads - who needs a scratch off world map when you can have a [mouse pad](https://www.amazon.com/dp/B01IR37TXM/).
+4. [Smart power outlets](https://www.amazon.com/dp/B07MV7F26P/ref=psdc_6291368011_t1_B07BGT5RX6) - depends on the region, linking type C for Europe.
+5. [Smart power outlet with remote](https://www.amazon.com/dp/B00DQELHBS/)
+6. [Power monitor](https://www.amazon.com/dp/B01CVMAK2M/) - you know how charging a phone via a laptop's USB port is horribly slow? This fixes that.
+7. [External power banks](https://www.amazon.co.uk/Mophie-PowerStation-X-Large-Portable-Charger-Black/dp/B07K4YQDLC/) - my suggestion would be Mophie but my huntch is that you would probably want to avoid the cheapest options altogether.
+
+# Namų dekoras
+
+1. [Cash in fake toy boxes](https://twitter.com/TwoClawsMedia/status/1210030954485633025)
+2. [Recipes in a jar](https://www.tasteofhome.com/collection/recipes-for-gifts-in-a-jar/) - the idea being that you have already measured the ingredients, all your friend has to do is add water/eggs/milk.
+
+8. [Logitech Spotlight Remote](https://www.logitech.com/en-us/product/spotlight-presentation-remote) - if I were still teaching, I sure as heck would want one!
+9. [Mini Microscopes](https://www.amazon.com/gp/product/B00LAX52IQ/) - these are great for friends with kids. Explore leaves, fabrics and pond critters.
+10. [3D Printing Pen](https://www.amazon.com/MYNT3D-Super-3D-Pen-Compatible) - haven't tried one the videos look great! Reminds me of stained glass paint you could draw on transparent sheets and then stick on windows.
+
+
+
+
+
+
+
+
+
+
