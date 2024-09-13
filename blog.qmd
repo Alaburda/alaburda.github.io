@@ -1,0 +1,24 @@
+---
+title: "Blog"
+listing: 
+  id: blog-listing
+  categories: true
+  feed: true
+  sort-ui: [date]
+  sort: "date"
+  contents:
+  - "posts/!(template|blog-image|references).qmd"
+  fields: [title, date, author, description, categories]
+  type: grid
+  grid-columns: 1
+  image-height: "12em"
+
+website:
+  description: "Blog description"
+---
+
+::: {#blog-listing}
+:::
+
+
+

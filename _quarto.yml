@@ -1,0 +1,21 @@
+project:
+  type: website
+
+website:
+  title: "Paulius Alaburda"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - href: blog.qmd
+        text: Blog
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+
