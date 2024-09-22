@@ -1,7 +1,9 @@
 ---
 title: "Grouping Overlapping Date Ranges"
 author: "Paulius Alaburda"
-
+date: 2024-09-13
+categories:
+  - SQL
 ---
 
 It's pretty straightforward to group rows in `SQL` if their date ranges are consecutive or have fixed gaps.[^1] It's _much_ harder if you want to group overlapping date ranges. I personally haven't used this trick in my own practice but there are use cases for it. For example, if a chat agent can work with multiple clients at once, your chat sessions will overlap. But you can't just aggregate the duration of the chats if you want to estimate the agent active time. That would give you an overestimate! Generally, grouping overlapping date ranges is a useful trick for whenever you want to know "active hours".

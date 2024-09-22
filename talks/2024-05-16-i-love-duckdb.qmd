@@ -1,0 +1,7 @@
+---
+title: "I Love DuckDB"
+---
+
+This was a talk at the first ever Business Garden R User Group in 2024.
+
+https://alaburda.github.io/i-love-duckdb/#/title-slide

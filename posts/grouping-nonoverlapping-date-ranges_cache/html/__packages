@@ -1,0 +1,6 @@
+DBI
+duckdb
+lubridate
+dplyr
+tidyr
+ggplot2

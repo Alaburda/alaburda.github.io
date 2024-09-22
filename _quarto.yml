@@ -2,6 +2,9 @@ project:
   type: website
   output-dir: docs
 
+execute:
+  cache: true
+
 website:
   title: "Paulius Alaburda"
   navbar:
@@ -11,6 +14,8 @@ website:
       - about.qmd
       - href: blog.qmd
         text: Blog
+      - href: talks.qmd
+        text: Talks
 
 format:
   html:

@@ -2,7 +2,14 @@
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/grouping-overlapping-date-ranges.html"
+      "/posts/grouping-overlapping-date-ranges.html",
+      "/posts/grouping-nonoverlapping-date-ranges.html"
+    ]
+  },
+  {
+    "listing": "/talks.html",
+    "items": [
+      "/talks/2024-05-16-i-love-duckdb.html"
     ]
   }
 ]
