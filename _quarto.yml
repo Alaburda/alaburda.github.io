@@ -1,0 +1,27 @@
+project:
+  type: website
+  output-dir: docs
+
+execute:
+  cache: true
+
+website:
+  title: "Paulius Alaburda"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - href: blog.qmd
+        text: Blog
+      - href: talks.qmd
+        text: Talks
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+

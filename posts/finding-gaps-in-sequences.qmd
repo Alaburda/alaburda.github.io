@@ -1,0 +1,65 @@
+---
+title: "Finding Gaps in Sequences"
+author: "Paulius Alaburda"
+date: 2024-09-13
+draft: true
+categories:
+  - SQL
+---
+
+In the [SQL Server MVP Deep Dives](https://www.manning.com/books/sql-server-mvp-deep-dives-volume-2), Itzik Ben-Gan outlines a SQL solution for finding gaps in sequences. It looks like this:
+
+```{sql}
+#| eval: false
+SELECT   seqval + 1 AS start_range,   (SELECT MIN(B.seqval)    FROM dbo.NumSeq AS B    WHERE B.seqval > A.seqval) - 1 AS end_range FROM dbo.NumSeq AS A WHERE NOT EXISTS   (SELECT *    FROM dbo.NumSeq AS B    WHERE B.seqval = A.seqval + 1)   AND seqval < (SELECT MAX(seqval) FROM dbo.NumSeq);
+
+```
+
+I can't make heads or tails of this query. This blog post is my attempt to understand it.
+
+## Sample Data
+
+Let's create a table with a sequence of numbers from 1 to 10, with a gap at 5:
+
+```{r}
+#| eval: false
+
+library(duckdb)
+
+sequence <- data.frame(id = c(1,2,3,11,12,13,31,33,34,35,42))
+
+con <- dbConnect(duckdb::duckdb())
+
+dbWriteTable(con, "sequence", sequence, overwrite = TRUE)
+
+ggplot(sequence, aes(x = id, y = 1L)) + geom_point()
+
+```
+
+## The SQL Query
+
+```{sql}
+#| eval: false
+
+select
+  start_seq.id+1 as start_range,
+  (select 
+      min(end_seq.id) 
+   from sequence as end_seq 
+   where end_seq.id > start_seq.id)-1 as end_range
+from sequence as start_seq
+where not exists (
+  select * 
+  from sequence as end_seq 
+  where end_seq.id = start_seq.id + 1
+) and start_seq.id < (select max(id) from sequence)
+
+
+
+```
+
+
+The idea is to find the first number in a sequence that doesn't have a successor. This is a common problem in SQL, and the solution is quite elegant. But what if you want to find gaps in a sequence that's not just a sequence of numbers? What if you want to find gaps in a sequence of dates, for example?
+
+
+

@@ -1,0 +1,87 @@
+---
+title: "dbt anti-pattern: using {{ this }} directly in incremental refreshes"
+---
+
+If you're using dbt, [the recommended default way](https://docs.getdbt.com/docs/build/incremental-models) to build incremental models looks like this:
+
+```{sql}
+#| eval: false
+
+{{
+    config(
+        materialized='incremental'
+    )
+}}
+
+select
+    *,
+    my_slow_function(my_column)
+
+from {{ ref('app_data_events') }}
+
+{% if is_incremental() %}
+
+  -- this filter will only be applied on an incremental run
+  -- (uses >= to include records whose timestamp occurred since the last run of this model)
+  -- (If event_time is NULL or the table is truncated, the condition will always be true and load all records)
+where event_time >= (select coalesce(max(event_time),'1900-01-01') from {{ this }} )
+
+{% endif %}
+
+```
+
+If you're unfamiliar with dbt's Jinja syntax, `{{ this }}` refers to the table that is built incrementally. If the table doesn't exist yet, dbt ignores the `where` condition and just runs the query. Afterwards, it checks the freshness of the incremental table via `max(event_time)`. The latest date is passed back to the source data so that we only add new data and avoiding running the query on data that was already processed and saved into the table. 
+
+Let's run a very similar query in DuckDB using the taxi dataset. This is the query plan :
+
+```{r}
+
+library(duckdb)
+
+con <- dbConnect(duckdb::duckdb())
+
+dbGetQuery(con, "explain analyze select * from 'taxi_2019_04.parquet' WHERE pickup_at > (select median(pickup_at) from 'taxi_2019_04.parquet')")
+
+```
+Our taxi table contains 7433139 rows, but the query scans the table twice! However, we would expect to see a full table scan to find the latest date and then a table scan that only scans a few rows or no rows at all. If you're working with small datasets or overprovisioned servers, you probably wouldn't notice this. For the longest time I didn't! Now, as our team runs A LOT of queries, a slow query sticks out like a sore thumb.  
+
+So, what's causing this behaviour? The problem is that the query engine doesn't know the result of the subquery in the where clause. Because of this, it can't project the where clause to the table, resulting in a full data scan. This is documented in [BigQuery](https://cloud.google.com/bigquery/docs/querying-partitioned-tables#better_performance_with_pseudo-columns), [MySQL](https://dev.mysql.com/doc/refman/8.4/en/subquery-optimization.html), it replicates in [Oracle](https://stackoverflow.com/questions/54348748/avoid-full-table-scan-with-subquery-or-analytic-function-in-view), as well as DuckDB. Let's fix this query!
+
+## Fixing the Query 
+
+Fixing the query requires us to separate the query into two queries. First, we need to save the latest date as a variable. Then, and only then, should we pass the variable to the final select statement. DuckDB has a useful feature called `GETVARIABLE` that allows us to do exactly that. dbt also supports variables, please refer to [this StackOverflow answer](https://stackoverflow.com/a/76735138). Here are benchmarks between a query that uses a subquery and one that first saves a variable:
+
+```{r}
+
+library(duckdb)
+library(dplyr)
+
+con <- dbConnect(duckdb::duckdb())
+
+filter_on_variable <- function() {
+
+  dbExecute(con, "SET VARIABLE median_pickup_at = (select median(pickup_at) from 'taxi_2019_04.parquet')")  
+  dbGetQuery(con, "select * from 'taxi_2019_04.parquet' WHERE pickup_at > GETVARIABLE('median_pickup_at')")
+  
+}
+
+filter_on_subquery <- function() {
+
+  dbGetQuery(con, "select * from 'taxi_2019_04.parquet' WHERE pickup_at > (select median(pickup_at) from 'taxi_2019_04.parquet')")
+  
+}
+
+read_benchmark <- bench::mark(
+  min_iterations = 30,
+  filter_on_variable = filter_on_variable(),
+  filter_on_subquery = filter_on_subquery(),
+  check = TRUE
+)
+
+ggplot2::autoplot(read_benchmark) + ggplot2::labs(title = "Query run duration", subtitle = "Lower is better")
+
+rm(read_benchmark)
+
+```
+
+I know, the gain doesn't seem THAT big. The difference diminishes if you're running this in memory. But this is not a very large dataset and the query is straightforward. Furthermore, if you're using BigQuery, the default dbt method scans more data and theoretically incurs unnecessary costs? I don't use BQ, so I'm only surmising here. In real-world cases, these difference could be exasperated. 

@@ -1,0 +1,24 @@
+---
+title: "Talks"
+listing: 
+  id: talks-listing
+  categories: true
+  feed: true
+  sort-ui: [date]
+  sort: "date"
+  contents:
+  - "talks/!(template|blog-image|references).qmd"
+  fields: [title, date, author, description, categories]
+  type: grid
+  grid-columns: 1
+  image-height: "12em"
+
+website:
+  description: "Blog description"
+---
+
+::: {#talks-listing}
+:::
+
+
+

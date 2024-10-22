@@ -1,0 +1,35 @@
+---
+title: "The Data Caterer"
+author: "Paulius Alaburda"
+date: 2024-09-13
+categories:
+  - prose
+draft: true
+---
+
+I feel like the work of data teams is somewhat similar to running a food catering service. Essentially, you're developing different dishes in the form of reports, dashboards, tools, plots or ML models. The dishes are made from data and there's usually an end user that consumes your dish. I find this parallel useful in a few ways.
+
+## Data sourcing matters
+
+## Mis-en-place 
+
+## Tracking data waste
+
+If your team is capable of developing ETL pipelines quickly, it's very easy to end up with redundant pipelines - some may overlap, some may not be used at all.
+
+ 
+
+
+"Look, my guys fill this sheet every week, you think you could make a nice dashboard out of it? I would love to show it for our weekly business review.
+"Sure, as long as they fill
+
+
+
+## The fine-dining experience
+
+Your clients won't be coming in every day, you'll be lucky if they show up more than once. Each customer has specific slide deck restrictions, wants their data arranged in a peculiar order. You're also striving to provide fresh data but the overhead on that is killing you because you use each source rarely.
+
+## The self-service experience
+
+Everyone gets a meal, noone is particularly happy because some filter, column or visual was missing that was crucial for their specific use case. They also had to package their own leftovers if they wanted to export them to Excel - oh, the tragedy!
+
