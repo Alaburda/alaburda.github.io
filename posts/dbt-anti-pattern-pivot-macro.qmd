@@ -1,5 +1,6 @@
 ---
-title: "dbt docs runs queries with pivot macros?"
+title: "dbt anti-pattern: dbt docs runs queries with pivot macros"
+date: "2024-10-19"
 ---
 
 I can't for the life of me find this documented but apparently queries that use the pivot or unpivot macros are run so that their compiled code becomes available in the catalog.json file. It's nuts that you have to run the query in order to have its code compiled – that's just resources burnt into the air! And if the pivot query runs on large amounts of data, that also slows down your data warehouse. Jeez! 

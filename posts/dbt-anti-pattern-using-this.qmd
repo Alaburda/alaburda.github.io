@@ -1,5 +1,6 @@
 ---
 title: "dbt anti-pattern: using {{ this }} directly in incremental refreshes"
+date: "2024-10-22"
 ---
 
 If you're using dbt, [the recommended default way](https://docs.getdbt.com/docs/build/incremental-models) to build incremental models looks like this:

@@ -1,0 +1,3007 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Paulius Alaburda</title>
+<link>https://alaburda.github.io/blog.html</link>
+<atom:link href="https://alaburda.github.io/blog.xml" rel="self" type="application/rss+xml"/>
+<description>Paulius Alaburda&#39;s blog posts</description>
+<generator>quarto-1.5.52</generator>
+<lastBuildDate>Sat, 14 Dec 2024 22:00:00 GMT</lastBuildDate>
+<item>
+  <title>Qualifying Events Using Recursive CTEs</title>
+  <dc:creator>Paulius Alaburda</dc:creator>
+  <link>https://alaburda.github.io/posts/qualifying-events-using-recursive-ctes.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Erika Pullum recently <a href="https://bsky.app/profile/erikapullum.bsky.social/post/3lcy2ha372s2n">shared</a> a great SQL brainteaser. Given a list of dates, the first date qualifies as TRUE and all subsequent dates qualify if it’s been more than 90 days since the last one. This requires a recursive CTE to solve because the 90 day gaps depend on the first row in the dataset.</p>
+<p>The final solution is at the end of the post. Along the way I’ve learned quite a few bits:</p>
+<ol type="1">
+<li>Any aggregate function will attempt to return a single row;</li>
+<li>You can limit the output of recursive CTEs in MySQL by placing the LIMIT clause <strong>inside</strong> the recursive CTE. You can also limit the output in DuckDB by placing the LIMIT at the <strong>end</strong> of the final query;</li>
+</ol>
+<section id="creating-the-dataset" class="level1">
+<h1>Creating the dataset</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"></span>
+<span id="cb1-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">create</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">table</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> </span>
+<span id="cb1-3">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-06-10'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-4">                </span>
+<span id="cb1-5">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-6">                </span>
+<span id="cb1-7">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-08-20'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-8">                </span>
+<span id="cb1-9">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-10">                </span>
+<span id="cb1-11">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-08-22'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-12">                </span>
+<span id="cb1-13">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-14">                </span>
+<span id="cb1-15">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-09-17'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-16">                </span>
+<span id="cb1-17">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-18">                </span>
+<span id="cb1-19">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-09-19'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-20">                </span>
+<span id="cb1-21">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-22">                </span>
+<span id="cb1-23">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-11-01'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-24">                </span>
+<span id="cb1-25">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-26">                </span>
+<span id="cb1-27">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-12-11'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb1-28">                </span>
+<span id="cb1-29">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ALL</span></span>
+<span id="cb1-30">                </span>
+<span id="cb1-31">                <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'2024-12-21'</span>:<span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">:date</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span></code></pre></div>
+</div>
+</section>
+<section id="bad-attempt---doing-a-plain-group-by" class="level1">
+<h1>Bad attempt - doing a plain group by</h1>
+<p>My first attempt looked like this - as you can see, it identifies the rows correctly but then starts printing NULLs. The code would print NULLs indefinitely because aggregate functions such as <code>max()</code> or <code>min()</code> always attempt to return a single row. When you run aggregate functions on an empty set, it will return a single row with the value NULL. Recursive CTEs stop only when a loop returns zero rows. So the query would keep running indefinitely - The LIMIT 10 clause ensures it stops running after 10 rows.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"></span>
+<span id="cb2-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> recursive recursive_cte <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb2-3"></span>
+<span id="cb2-4">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb2-5">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span>.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb2-6">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span></span>
+<span id="cb2-7"></span>
+<span id="cb2-8">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">union</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">all</span></span>
+<span id="cb2-9">    </span>
+<span id="cb2-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span> </span>
+<span id="cb2-11">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(recursive_events.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb2-12">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span> recursive_events</span>
+<span id="cb2-13">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">join</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> recursive_cte) latest_date</span>
+<span id="cb2-14">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">on</span> recursive_events.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> latest_date.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span> </span>
+<span id="cb2-15">)</span>
+<span id="cb2-16"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb2-17"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> recursive_cte</span>
+<span id="cb2-18"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">LIMIT</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">d</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2024-06-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-09-17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-12-21</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NA</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="ok-attempt---ditching-aggregate-functions" class="level1">
+<h1>OK attempt - ditching aggregate functions</h1>
+<p>My second attempt worked but it results in an additional subquery inside of a CTEs. Right after writing this I understood that debugging such a query would be very difficult!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"></span>
+<span id="cb3-2"></span>
+<span id="cb3-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> recursive recursive_cte <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb3-4"></span>
+<span id="cb3-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb3-6">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span>.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb3-7">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span></span>
+<span id="cb3-8"></span>
+<span id="cb3-9">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">union</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">all</span></span>
+<span id="cb3-10">    </span>
+<span id="cb3-11">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> d</span>
+<span id="cb3-12">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span></span>
+<span id="cb3-13">    (</span>
+<span id="cb3-14">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span> </span>
+<span id="cb3-15">            recursive_events.d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d,</span>
+<span id="cb3-16">            <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> recursive_events.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> rn</span>
+<span id="cb3-17">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span> recursive_events</span>
+<span id="cb3-18">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">join</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> recursive_cte) latest_date</span>
+<span id="cb3-19">            <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">on</span> recursive_events.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> latest_date.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span> </span>
+<span id="cb3-20">     ) ranked_dates</span>
+<span id="cb3-21">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">where</span> rn <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-22">)</span>
+<span id="cb3-23"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb3-24"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> recursive_cte</span>
+<span id="cb3-25"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">LIMIT</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span></span></code></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>3 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">d</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2024-06-10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-09-17</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-12-21</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="good-attempt---aggregates-using-having" class="level1">
+<h1>Good attempt - aggregates using HAVING</h1>
+<p>As I was brushing my teeth, I remembered about the HAVING clause! I don’t think I’ve ever used HAVING to filter for non-NULL values. Here’s the final solution:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"></span>
+<span id="cb4-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> recursive recursive_cte <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb4-3"></span>
+<span id="cb4-4">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb4-5">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span>.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb4-6">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span></span>
+<span id="cb4-7"></span>
+<span id="cb4-8">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">union</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">all</span></span>
+<span id="cb4-9">    </span>
+<span id="cb4-10">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span> </span>
+<span id="cb4-11">        <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(recursive_events.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d</span>
+<span id="cb4-12">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span> recursive_events</span>
+<span id="cb4-13">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">inner</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">join</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> recursive_cte) latest_date</span>
+<span id="cb4-14">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">on</span> recursive_events.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> latest_date.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">90</span> </span>
+<span id="cb4-15">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">having</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(recursive_events.d) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">null</span></span>
+<span id="cb4-16">    </span>
+<span id="cb4-17">)</span>
+<span id="cb4-18"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb4-19">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span>.d,</span>
+<span id="cb4-20">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">case</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">when</span> recursive_cte.d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">is</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">not</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">null</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">then</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">true</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">false</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">end</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> is_after_cooldown</span>
+<span id="cb4-21"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span></span>
+<span id="cb4-22"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">left</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">join</span> recursive_cte </span>
+<span id="cb4-23">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">on</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span>.d <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> recursive_cte.d</span>
+<span id="cb4-24"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">events</span>.d </span></code></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>8 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">d</th>
+<th style="text-align: left;">is_after_cooldown</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">2024-06-10</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-08-20</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-08-22</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-09-17</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-09-19</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-11-01</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">2024-12-11</td>
+<td style="text-align: left;">FALSE</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2024-12-21</td>
+<td style="text-align: left;">TRUE</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>SQL</category>
+  <guid>https://alaburda.github.io/posts/qualifying-events-using-recursive-ctes.html</guid>
+  <pubDate>Sat, 14 Dec 2024 22:00:00 GMT</pubDate>
+  <media:content url="https://alaburda.github.io/posts/posts/img/quantifying-events-using-recursive-ctes.png" medium="image" type="image/png"/>
+</item>
+<item>
+  <title>Grouping Non-Overlapping Date Ranges</title>
+  <dc:creator>Paulius Alaburda</dc:creator>
+  <link>https://alaburda.github.io/posts/grouping-nonoverlapping-date-ranges.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>If you’re a data analyst at a company, it’s VERY likely your company stores some data as a <a href="https://en.wikipedia.org/wiki/Slowly_changing_dimension">Type 2 slowly-changing dimension</a>. It’s also likely that the way it’s stored may not align with how you want to model it in the warehouse. Imagine you’re managing a subscription-based service. You might want to display a user’s subscription history as a single entry, showing the start date of their first subscription and the end date of their last - but only if there were no gaps in service. Or perhaps you’re tracking subscription tiers, and you want to combine multiple entries into one as long as the tier remained the same. In this post, we’ll explore how to handle these scenarios efficiently, making your data more manageable and insightful.</p>
+<p>Also, as an aside, I’ve started this post as a “consecutive” date range blog post for cases where your rows are consecutive and gapless. But in reality, the island and gaps method is universal for any scenario where the date ranges are not overlapping.</p>
+<section id="sample-data" class="level2">
+<h2 class="anchored" data-anchor-id="sample-data">Sample Data</h2>
+<p>Let’s follow along with the example I introduced just now: our sample data are consecutive date ranges that alternate between two subscription tiers (highlighted with a different color). Let’s also introduce small gaps between the date ranges - visually they’re not visible but the SQL query will pick up on them.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(duckdb)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: DBI</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(lubridate)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(dplyr)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyr)</span>
+<span id="cb10-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(ggplot2)</span>
+<span id="cb10-3"></span>
+<span id="cb10-4">con <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbConnect</span>(duckdb<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">duckdb</span>())</span>
+<span id="cb10-5"></span>
+<span id="cb10-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"functions.R"</span>)</span>
+<span id="cb10-7"></span>
+<span id="cb10-8">consecutive_dates <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">generate_intervals</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">groups =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">duration =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">gaps =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb10-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">tier =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sample</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Free"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Premium"</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">size =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">replace =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">prob =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>)))</span>
+<span id="cb10-10"></span>
+<span id="cb10-11">p1 <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> consecutive_dates <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb10-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_timeline</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb10-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb10-14">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb10-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_grid</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>group_id) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb10-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Non-overlapping intervals alternating between two subscription tiers."</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">p1</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/grouping-nonoverlapping-date-ranges_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbWriteTable</span>(con, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"consecutive_dates"</span>, consecutive_dates, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">overwrite =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span></code></pre></div>
+</div>
+<p>I’m interested in two scenarios. First, grouping these intervals by their tier if the intervals are consecutive. Second, I want to also group those intervals by tier as well as by whether they were uninterrupted. I’m not interested in JUST getting the start and end dates for each group - for that, a normal group by would suffice.</p>
+</section>
+<section id="grouping-date-ranges-by-group-and-tier" class="level2">
+<h2 class="anchored" data-anchor-id="grouping-date-ranges-by-group-and-tier">Grouping date ranges by group and tier</h2>
+<p>All of the queries will follow the same pattern:</p>
+<ul>
+<li>First, we do a <code>row_number()</code> for our groups whose rows are chronological - essentially, we’re building an index for each of our groups;</li>
+<li>Then, we create another <code>row_number()</code> column that uses the group variable as well as ALL the rest of the columns we want to group by</li>
+<li>Finally, we group by the difference between the two columns. The idea is that if the first and the second <code>row_numbers</code> are increasing sequentally at the same rate, their difference will produce a constant value. What’s even better is that value will be unique within the scope of the columns we’re grouping by!</li>
+</ul>
+<div class="cell" data-output.var="islands">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb14-1"></span>
+<span id="cb14-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> tmp <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb14-3">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span></span>
+<span id="cb14-4">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">partition</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> group_rank,</span>
+<span id="cb14-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">partition</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, tier <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> tier_rank,</span>
+<span id="cb14-6">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb14-7">    tier,</span>
+<span id="cb14-8">    date_from,</span>
+<span id="cb14-9">    date_to</span>
+<span id="cb14-10">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> consecutive_dates</span>
+<span id="cb14-11">)</span>
+<span id="cb14-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span></span>
+<span id="cb14-13">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb14-14">  tier,</span>
+<span id="cb14-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> date_from,</span>
+<span id="cb14-16">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> date_to</span>
+<span id="cb14-17"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> tmp</span>
+<span id="cb14-18"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, tier, (group_rank<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>tier_rank)</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1">islands <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> islands <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb15-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">island_id =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.character</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>()))</span>
+<span id="cb15-3"></span>
+<span id="cb15-4">consecutive_dates <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb15-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_timeline</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb15-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_grid</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>group_id) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb15-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> islands, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ymin =</span> date_from, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ymax =</span> date_to, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xmin =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">Inf</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xmax =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">Inf</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> tier, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb15-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb15-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb15-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/grouping-nonoverlapping-date-ranges_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="amending-the-sql-query-to-allow-multiple-columns" class="level2">
+<h2 class="anchored" data-anchor-id="amending-the-sql-query-to-allow-multiple-columns">Amending the SQL query to allow multiple columns</h2>
+<p>What if we also want to check whether the data ranges are uninterrupted, i.e.&nbsp;they have no gaps? We have to build a new variable that checks whether the current subscription followed immediately after the one before it (through <code>lag(date_to,1)</code>). Then, we have to partition by that new column but we have to create a combined column from <code>tier</code> and the new column <code>is_consecutive</code>.</p>
+<div class="cell" data-output.var="consecutive_islands">
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb16-1"></span>
+<span id="cb16-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> lag_date_from <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb16-3">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb16-4">    consecutive_dates.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb16-5">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lag</span>(date_to,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">partition</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> lag_date_to</span>
+<span id="cb16-6">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> consecutive_dates</span>
+<span id="cb16-7">),</span>
+<span id="cb16-8">gap_calc <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb16-9">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb16-10">    lag_date_from.<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb16-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">case</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">when</span> lag_date_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">interval</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">day</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> date_from <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">then</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">end</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> is_consecutive</span>
+<span id="cb16-12">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> lag_date_from</span>
+<span id="cb16-13">),</span>
+<span id="cb16-14">tmp <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb16-15">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span></span>
+<span id="cb16-16">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">partition</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> group_rank,</span>
+<span id="cb16-17">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">partition</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, tier <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> group_tier_rank,</span>
+<span id="cb16-18">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">over</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">partition</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, tier<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">||</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cast</span>(is_consecutive <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">varchar</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> group_tier_cons_rank,</span>
+<span id="cb16-19">    tier<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">||</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cast</span>(is_consecutive <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">varchar</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> tier_cons,</span>
+<span id="cb16-20">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb16-21">    is_consecutive,</span>
+<span id="cb16-22">    tier,</span>
+<span id="cb16-23">    date_from,</span>
+<span id="cb16-24">    date_to</span>
+<span id="cb16-25">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> gap_calc</span>
+<span id="cb16-26">)</span>
+<span id="cb16-27"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb16-28">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb16-29">  tier_cons,</span>
+<span id="cb16-30">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> date_from,</span>
+<span id="cb16-31">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> date_to</span>
+<span id="cb16-32"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> tmp</span>
+<span id="cb16-33"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, tier_cons, (group_rank<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>group_tier_cons_rank)</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1">consecutive_islands <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> consecutive_islands <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb17-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">island_id =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.character</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>()))</span>
+<span id="cb17-3"></span>
+<span id="cb17-4">consecutive_dates <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb17-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_timeline</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb17-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_grid</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>group_id) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb17-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> consecutive_islands, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ymin =</span> date_from, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ymax =</span> date_to, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xmin =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">Inf</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xmax =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">Inf</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> tier_cons, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier_cons), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.3</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb17-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_point</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb17-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_line</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color =</span> tier)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb17-10">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/grouping-nonoverlapping-date-ranges_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-end---jfc-that-was-an-ugly-plot" class="level2">
+<h2 class="anchored" data-anchor-id="the-end---jfc-that-was-an-ugly-plot">The End - jfc that was an ugly plot</h2>
+<p>It was! I don’t mind, though - it’s there to visually prove the query works. The query is extensible to other scenarios. For example, if you had a task of grouping user events into sessions if the events happened within 3 days of each other, you could just change the <code>case when</code> statement that creates the <code>is_consecutive</code> column so that we check whether <code>lag(date_to,1) + interval 3 day</code> is equal to or larger than <code>date_from</code>. Feel free to try the pattern out yourself!</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ol type="1">
+<li>https://livebook.manning.com/book/sql-server-mvp-deep-dives/chapter-5/</li>
+<li>https://www.itprotoday.com/innovations-of-the-2010s/solving-gaps-and-islands-with-enhanced-window-functions</li>
+</ol>
+
+
+</section>
+
+ ]]></description>
+  <category>SQL</category>
+  <guid>https://alaburda.github.io/posts/grouping-nonoverlapping-date-ranges.html</guid>
+  <pubDate>Sat, 21 Sep 2024 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Paulius Alaburda</dc:creator>
+  <link>https://alaburda.github.io/posts/finding-gaps-in-sequences.html</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>SQL</category>
+  <guid>https://alaburda.github.io/posts/finding-gaps-in-sequences.html</guid>
+  <pubDate>Thu, 12 Sep 2024 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Grouping Overlapping Date Ranges</title>
+  <dc:creator>Paulius Alaburda</dc:creator>
+  <link>https://alaburda.github.io/posts/grouping-overlapping-date-ranges.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>It’s pretty straightforward to group rows in <code>SQL</code> if their date ranges are consecutive or have fixed gaps.<sup>1</sup> It’s <em>much</em> harder if you want to group overlapping date ranges. I personally haven’t used this trick in my own practice but there are use cases for it. For example, if a chat agent can work with multiple clients at once, your chat sessions will overlap. But you can’t just aggregate the duration of the chats if you want to estimate the agent active time. That would give you an overestimate! Generally, grouping overlapping date ranges is a useful trick for whenever you want to know “active hours”.</p>
+<section id="sample-data" class="level2">
+<h2 class="anchored" data-anchor-id="sample-data">Sample Data</h2>
+<p>The sample data are randomly generated date intervals (i.e.&nbsp;they have a start date and an end date), generated in a way so that each colored group’s intervals overlap most of the time.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/grouping-overlapping-date-ranges_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sql-solution-step-by-step" class="level2">
+<h2 class="anchored" data-anchor-id="sql-solution-step-by-step">SQL Solution Step-by-Step</h2>
+<p>The following SQL code works in four steps and let’s imagine we’re an interval in this dataset:</p>
+<ol type="1">
+<li>First of all, the <code>BETWEEN UNBOUNDED PRECEDING and 1 PRECEDING</code> is the key to this trick. For every row, it answers the question “which of the intervals that started before me have the latest end date?”.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"></span>
+<span id="cb1-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> prev_date <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb1-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb1-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ROW_NUMBER</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from, date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> date_rank,</span>
+<span id="cb1-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb1-6">  date_from,</span>
+<span id="cb1-7">  date_to,</span>
+<span id="cb1-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">MAX</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PARTITION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> date_from, date_to <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ROWS</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BETWEEN</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNBOUNDED</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AND</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> previous_date_to</span>
+<span id="cb1-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span></span>
+<span id="cb1-10">  overlapping_ranges</span>
+<span id="cb1-11">)</span>
+<span id="cb1-12"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb1-13">  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb1-14"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> prev_date</span>
+<span id="cb1-15"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from</span></code></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">date_rank</th>
+<th style="text-align: left;">group_id</th>
+<th style="text-align: left;">date_from</th>
+<th style="text-align: left;">date_to</th>
+<th style="text-align: left;">previous_date_to</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-01</td>
+<td style="text-align: left;">2024-07-10</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-13</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: left;">2024-07-10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-14</td>
+<td style="text-align: left;">2024-07-15</td>
+<td style="text-align: left;">2024-07-20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-16</td>
+<td style="text-align: left;">2024-07-19</td>
+<td style="text-align: left;">2024-07-20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-16</td>
+<td style="text-align: left;">2024-07-26</td>
+<td style="text-align: left;">2024-07-20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-25</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: left;">2024-07-26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-28</td>
+<td style="text-align: left;">2024-07-29</td>
+<td style="text-align: left;">2024-08-01</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-30</td>
+<td style="text-align: left;">2024-08-03</td>
+<td style="text-align: left;">2024-08-01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-30</td>
+<td style="text-align: left;">2024-08-05</td>
+<td style="text-align: left;">2024-08-03</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-31</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: left;">2024-08-05</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ol start="2" type="1">
+<li>Then, we check whether the interval before me ended before I had started or after I had started.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb2-1"></span>
+<span id="cb2-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> prev_date <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb2-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb2-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ROW_NUMBER</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from, date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> date_rank,</span>
+<span id="cb2-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb2-6">  date_from,</span>
+<span id="cb2-7">  date_to,</span>
+<span id="cb2-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">MAX</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PARTITION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> date_from, date_to <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ROWS</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BETWEEN</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNBOUNDED</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AND</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> previous_date_to</span>
+<span id="cb2-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span></span>
+<span id="cb2-10">  overlapping_ranges</span>
+<span id="cb2-11">),</span>
+<span id="cb2-12">islands <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb2-13"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb2-14"> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb2-15"> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">WHEN</span> previous_date_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> date_from <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">THEN</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ELSE</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">END</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> island_start_id</span>
+<span id="cb2-16"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> prev_date</span>
+<span id="cb2-17">)</span>
+<span id="cb2-18"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb2-19">  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb2-20"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> islands</span>
+<span id="cb2-21"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from</span></code></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<colgroup>
+<col style="width: 13%">
+<col style="width: 12%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 22%">
+<col style="width: 21%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">date_rank</th>
+<th style="text-align: left;">group_id</th>
+<th style="text-align: left;">date_from</th>
+<th style="text-align: left;">date_to</th>
+<th style="text-align: left;">previous_date_to</th>
+<th style="text-align: right;">island_start_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-01</td>
+<td style="text-align: left;">2024-07-10</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-13</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: left;">2024-07-10</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-14</td>
+<td style="text-align: left;">2024-07-15</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-16</td>
+<td style="text-align: left;">2024-07-19</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-16</td>
+<td style="text-align: left;">2024-07-26</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-25</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: left;">2024-07-26</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-28</td>
+<td style="text-align: left;">2024-07-29</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-30</td>
+<td style="text-align: left;">2024-08-03</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-30</td>
+<td style="text-align: left;">2024-08-05</td>
+<td style="text-align: left;">2024-08-03</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-31</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: left;">2024-08-05</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ol start="3" type="1">
+<li>Finally, we run a rolling <code>SUM</code> over the second step to find consecutive overlaps. Essentially, if the interval before me overlapped with someone, if I’m overlapping with the interval before me, and the interval after me overlapping with someone, that is good enough to say that yes, all of these three intervals form a chain of overlapping intervals.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb3-1"></span>
+<span id="cb3-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> prev_date <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb3-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb3-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ROW_NUMBER</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from, date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> date_rank,</span>
+<span id="cb3-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb3-6">  date_from,</span>
+<span id="cb3-7">  date_to,</span>
+<span id="cb3-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">MAX</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PARTITION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> date_from, date_to <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ROWS</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BETWEEN</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNBOUNDED</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AND</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> previous_date_to</span>
+<span id="cb3-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span></span>
+<span id="cb3-10">  overlapping_ranges</span>
+<span id="cb3-11">),</span>
+<span id="cb3-12">islands <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb3-13"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb3-14"> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb3-15"> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">WHEN</span> previous_date_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> date_from <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">THEN</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ELSE</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">END</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> island_start_id,</span>
+<span id="cb3-16"> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">SUM</span>(<span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">WHEN</span> previous_date_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> date_from <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">THEN</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ELSE</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> date_rank) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> island_id</span>
+<span id="cb3-17"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> prev_date</span>
+<span id="cb3-18">)</span>
+<span id="cb3-19"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb3-20">  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span>
+<span id="cb3-21"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> islands</span>
+<span id="cb3-22"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">order</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from</span></code></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Displaying records 1 - 10</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 20%">
+<col style="width: 19%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">date_rank</th>
+<th style="text-align: left;">group_id</th>
+<th style="text-align: left;">date_from</th>
+<th style="text-align: left;">date_to</th>
+<th style="text-align: left;">previous_date_to</th>
+<th style="text-align: right;">island_start_id</th>
+<th style="text-align: right;">island_id</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-01</td>
+<td style="text-align: left;">2024-07-10</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-13</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: left;">2024-07-10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-14</td>
+<td style="text-align: left;">2024-07-15</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-16</td>
+<td style="text-align: left;">2024-07-19</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-16</td>
+<td style="text-align: left;">2024-07-26</td>
+<td style="text-align: left;">2024-07-20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-25</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: left;">2024-07-26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-28</td>
+<td style="text-align: left;">2024-07-29</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-30</td>
+<td style="text-align: left;">2024-08-03</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-30</td>
+<td style="text-align: left;">2024-08-05</td>
+<td style="text-align: left;">2024-08-03</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2024-07-31</td>
+<td style="text-align: left;">2024-08-01</td>
+<td style="text-align: left;">2024-08-05</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ol start="4" type="1">
+<li>And of course, we aggregate on the result of the rolling of <code>SUM</code> to get the start and end dates of the whole overlapping cluster of rows.</li>
+</ol>
+</section>
+<section id="final-sql-solution" class="level1">
+<h1>Final SQL Solution</h1>
+<p>Here’s the full <code>SQL</code> solution:</p>
+<div class="cell" data-output.var="overlapping_islands">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"></span>
+<span id="cb4-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> prev_date <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb4-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb4-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ROW_NUMBER</span>() <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, date_from, date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> date_rank,</span>
+<span id="cb4-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb4-6">  date_from,</span>
+<span id="cb4-7">  date_to,</span>
+<span id="cb4-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">MAX</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PARTITION</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> date_from, date_to <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ROWS</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BETWEEN</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">UNBOUNDED</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AND</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">PRECEDING</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> previous_date_to</span>
+<span id="cb4-9"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">FROM</span></span>
+<span id="cb4-10">  overlapping_ranges</span>
+<span id="cb4-11">),</span>
+<span id="cb4-12">islands <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> (</span>
+<span id="cb4-13"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">SELECT</span></span>
+<span id="cb4-14"> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb4-15"> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">WHEN</span> previous_date_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> date_from <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">THEN</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ELSE</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">END</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> island_start_id,</span>
+<span id="cb4-16"> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">SUM</span>(<span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">CASE</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">WHEN</span> previous_date_to <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> date_from <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">THEN</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ELSE</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">END</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">OVER</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">ORDER</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">BY</span> date_rank) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">AS</span> island_id</span>
+<span id="cb4-17"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> prev_date</span>
+<span id="cb4-18">)</span>
+<span id="cb4-19"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> </span>
+<span id="cb4-20">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>,</span>
+<span id="cb4-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cast</span>(island_id <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">varchar</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> island_id,</span>
+<span id="cb4-22">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">min</span>(date_from) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> date_from,</span>
+<span id="cb4-23">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(date_to) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">as</span> date_to</span>
+<span id="cb4-24"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> islands</span>
+<span id="cb4-25"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">group</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">by</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_id</span>, island_id</span></code></pre></div>
+</div>
+<p>This solution is a variation on the island and gap problem, it just changes how we define the “island start” column. Also, you can’t just use a <code>lag(date_to,1)</code> because you might overlap with the an interval three before you but not the one before you. Visually, this is our end result superimposed on the initial dataset. The derived intervals are shaded areas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">overlapping_islands <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> overlapping_islands <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">island_id =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.character</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">row_number</span>()))</span>
+<span id="cb5-3"></span>
+<span id="cb5-4">overlapping_dates <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span> </span>
+<span id="cb5-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_timeline</span>() <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb5-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">facet_grid</span>(group_id<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>.) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb5-7">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">geom_rect</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">data =</span> overlapping_islands, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">aes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NULL</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ymin =</span> date_from, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ymax =</span> date_to, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xmin =</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">Inf</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xmax =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">Inf</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> island_id), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">alpha =</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb5-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">guides</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fill =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>)</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/grouping-overlapping-date-ranges_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Blog posts pending!↩︎</p></li>
+</ol>
+</section></div> ]]></description>
+  <category>SQL</category>
+  <guid>https://alaburda.github.io/posts/grouping-overlapping-date-ranges.html</guid>
+  <pubDate>Thu, 12 Sep 2024 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title></title>
+  <dc:creator>Paulius Alaburda</dc:creator>
+  <link>https://alaburda.github.io/posts/the-data-caterer.html</link>
+  <description><![CDATA[ undefined ]]></description>
+  <category>prose</category>
+  <guid>https://alaburda.github.io/posts/the-data-caterer.html</guid>
+  <pubDate>Thu, 12 Sep 2024 21:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>dbt docs runs queries with pivot macros?</title>
+  <link>https://alaburda.github.io/posts/dbt-anti-pattern-pivot-macro.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>I can’t for the life of me find this documented but apparently queries that use the pivot or unpivot macros are run so that their compiled code becomes available in the catalog.json file. It’s nuts that you have to run the query in order to have its code compiled – that’s just resources burnt into the air! And if the pivot query runs on large amounts of data, that also slows down your data warehouse. Jeez!</p>
+
+
+
+ ]]></description>
+  <guid>https://alaburda.github.io/posts/dbt-anti-pattern-pivot-macro.html</guid>
+  <pubDate>Sun, 15 Dec 2024 14:04:07 GMT</pubDate>
+</item>
+<item>
+  <title>dbt anti-pattern: using {{ this }} directly in incremental refreshes</title>
+  <link>https://alaburda.github.io/posts/dbt-anti-pattern-using-this.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>If you’re using dbt, <a href="https://docs.getdbt.com/docs/build/incremental-models">the recommended default way</a> to build incremental models looks like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1">{{</span>
+<span id="cb1-2">    config(</span>
+<span id="cb1-3">        <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">materialized</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'incremental'</span></span>
+<span id="cb1-4">    )</span>
+<span id="cb1-5">}}</span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span></span>
+<span id="cb1-8">    <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>,</span>
+<span id="cb1-9">    my_slow_function(my_column)</span>
+<span id="cb1-10"></span>
+<span id="cb1-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> {{ <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ref</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'app_data_events'</span>) }}</span>
+<span id="cb1-12"></span>
+<span id="cb1-13">{% <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> is_incremental() %}</span>
+<span id="cb1-14"></span>
+<span id="cb1-15">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-- this filter will only be applied on an incremental run</span></span>
+<span id="cb1-16">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-- (uses &gt;= to include records whose timestamp occurred since the last run of this model)</span></span>
+<span id="cb1-17">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-- (If event_time is NULL or the table is truncated, the condition will always be true and load all records)</span></span>
+<span id="cb1-18"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">where</span> event_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> (<span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">select</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">coalesce</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">max</span>(event_time),<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'1900-01-01'</span>) <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">from</span> {{ this }} )</span>
+<span id="cb1-19"></span>
+<span id="cb1-20">{% endif %}</span></code></pre></div>
+</div>
+<p>If you’re unfamiliar with dbt’s Jinja syntax, <code>{ this }</code> refers to the table that is built incrementally. If the table doesn’t exist yet, dbt ignores the <code>where</code> condition and just runs the query. Afterwards, it checks the freshness of the incremental table via <code>max(event_time)</code>. The latest date is passed back to the source data so that we only add new data and avoiding running the query on data that was already processed and saved into the table.</p>
+<p>Let’s run a very similar query in DuckDB using the taxi dataset. This is the query plan :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(duckdb)</span>
+<span id="cb2-2"></span>
+<span id="cb2-3">con <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbConnect</span>(duckdb<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">duckdb</span>())</span>
+<span id="cb2-4"></span>
+<span id="cb2-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbGetQuery</span>(con, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"explain analyze select * from 'taxi_2019_04.parquet' WHERE pickup_at &gt; (select median(pickup_at) from 'taxi_2019_04.parquet')"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>analyzed_plan
+┌─────────────────────────────────────┐
+│┌───────────────────────────────────┐│
+││    Query Profiling Information    ││
+│└───────────────────────────────────┘│
+└─────────────────────────────────────┘
+explain analyze select * from 'taxi_2019_04.parquet' WHERE pickup_at &gt; (select median(pickup_at) from 'taxi_2019_04.parquet')
+┌────────────────────────────────────────────────┐
+│┌──────────────────────────────────────────────┐│
+││              Total Time: 0.277s              ││
+│└──────────────────────────────────────────────┘│
+└────────────────────────────────────────────────┘
+┌───────────────────────────┐
+│           QUERY           │
+│    ────────────────────   │
+│           0 Rows          │
+│          (0.00s)          │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│      EXPLAIN_ANALYZE      │
+│    ────────────────────   │
+│           0 Rows          │
+│          (0.00s)          │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│         PROJECTION        │
+│    ────────────────────   │
+│         vendor_id         │
+│         pickup_at         │
+│         dropoff_at        │
+│      passenger_count      │
+│       trip_distance       │
+│        rate_code_id       │
+│     store_and_fwd_flag    │
+│     pickup_location_id    │
+│    dropoff_location_id    │
+│        payment_type       │
+│        fare_amount        │
+│           extra           │
+│          mta_tax          │
+│         tip_amount        │
+│        tolls_amount       │
+│   improvement_surcharge   │
+│        total_amount       │
+│    congestion_surcharge   │
+│                           │
+│        3716563 Rows       │
+│          (0.00s)          │
+└─────────────┬─────────────┘
+┌─────────────┴─────────────┐
+│      NESTED_LOOP_JOIN     │
+│    ────────────────────   │
+│      Join Type: INNER     │
+│                           │
+│        Conditions:        ├──────────────┐
+│    pickup_at &gt; SUBQUERY   │              │
+│                           │              │
+│        3716563 Rows       │              │
+│          (0.05s)          │              │
+└─────────────┬─────────────┘              │
+┌─────────────┴─────────────┐┌─────────────┴─────────────┐
+│         TABLE_SCAN        ││         PROJECTION        │
+│    ────────────────────   ││    ────────────────────   │
+│         Function:         ││ CASE  WHEN ((#1 &gt; 1)) THEN│
+│        PARQUET_SCAN       ││  (error('More than one row│
+│                           ││   returned by a subquery  │
+│        Projections:       ││   used as an expression - │
+│         pickup_at         ││    scalar subqueries can  │
+│         vendor_id         ││  only return a single row.│
+│         dropoff_at        ││          Use "SET         │
+│      passenger_count      ││ scalar_subquery_error_on_m│
+│       trip_distance       ││   ultiple_rows=false" to  │
+│        rate_code_id       ││     revert to previous    │
+│     store_and_fwd_flag    ││   behavior of returning a │
+│     pickup_location_id    ││ random row.')) ELSE #0 END│
+│    dropoff_location_id    ││                           │
+│        payment_type       ││                           │
+│        fare_amount        ││                           │
+│           extra           ││                           │
+│          mta_tax          ││                           │
+│         tip_amount        ││                           │
+│        tolls_amount       ││                           │
+│   improvement_surcharge   ││                           │
+│        total_amount       ││                           │
+│    congestion_surcharge   ││                           │
+│                           ││                           │
+│        7433139 Rows       ││           1 Rows          │
+│          (2.69s)          ││          (0.00s)          │
+└───────────────────────────┘└─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │    UNGROUPED_AGGREGATE    │
+                             │    ────────────────────   │
+                             │        Aggregates:        │
+                             │        "first"(#0)        │
+                             │        count_star()       │
+                             │                           │
+                             │           1 Rows          │
+                             │          (0.00s)          │
+                             └─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │         PROJECTION        │
+                             │    ────────────────────   │
+                             │             #0            │
+                             │                           │
+                             │           1 Rows          │
+                             │          (0.00s)          │
+                             └─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │    UNGROUPED_AGGREGATE    │
+                             │    ────────────────────   │
+                             │        Aggregates:        │
+                             │         median(#0)        │
+                             │                           │
+                             │           1 Rows          │
+                             │          (0.17s)          │
+                             └─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │         PROJECTION        │
+                             │    ────────────────────   │
+                             │         pickup_at         │
+                             │                           │
+                             │        7433139 Rows       │
+                             │          (0.00s)          │
+                             └─────────────┬─────────────┘
+                             ┌─────────────┴─────────────┐
+                             │         TABLE_SCAN        │
+                             │    ────────────────────   │
+                             │         Function:         │
+                             │        PARQUET_SCAN       │
+                             │                           │
+                             │        Projections:       │
+                             │         pickup_at         │
+                             │                           │
+                             │        7433139 Rows       │
+                             │          (0.20s)          │
+                             └───────────────────────────┘</code></pre>
+</div>
+</div>
+<p>Our taxi table contains 7433139 rows, but the query scans the table twice! However, we would expect to see a full table scan to find the latest date and then a table scan that only scans a few rows or no rows at all. If you’re working with small datasets or overprovisioned servers, you probably wouldn’t notice this. For the longest time I didn’t! Now, as our team runs A LOT of queries, a slow query sticks out like a sore thumb.</p>
+<p>So, what’s causing this behaviour? The problem is that the query engine doesn’t know the result of the subquery in the where clause. Because of this, it can’t project the where clause to the table, resulting in a full data scan. This is documented in <a href="https://cloud.google.com/bigquery/docs/querying-partitioned-tables#better_performance_with_pseudo-columns">BigQuery</a>, <a href="https://dev.mysql.com/doc/refman/8.4/en/subquery-optimization.html">MySQL</a>, it replicates in <a href="https://stackoverflow.com/questions/54348748/avoid-full-table-scan-with-subquery-or-analytic-function-in-view">Oracle</a>, as well as DuckDB. Let’s fix this query!</p>
+<section id="fixing-the-query" class="level2">
+<h2 class="anchored" data-anchor-id="fixing-the-query">Fixing the Query</h2>
+<p>Fixing the query requires us to separate the query into two queries. First, we need to save the latest date as a variable. Then, and only then, should we pass the variable to the final select statement. DuckDB has a useful feature called <code>GETVARIABLE</code> that allows us to do exactly that. dbt also supports variables, please refer to <a href="https://stackoverflow.com/a/76735138">this StackOverflow answer</a>. Here are benchmarks between a query that uses a subquery and one that first saves a variable:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(duckdb)</span>
+<span id="cb4-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(dplyr)</span>
+<span id="cb4-3"></span>
+<span id="cb4-4">con <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbConnect</span>(duckdb<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">duckdb</span>())</span>
+<span id="cb4-5"></span>
+<span id="cb4-6">filter_on_variable <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb4-7"></span>
+<span id="cb4-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbExecute</span>(con, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"SET VARIABLE median_pickup_at = (select median(pickup_at) from 'taxi_2019_04.parquet')"</span>)  </span>
+<span id="cb4-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbGetQuery</span>(con, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"select * from 'taxi_2019_04.parquet' WHERE pickup_at &gt; GETVARIABLE('median_pickup_at')"</span>)</span>
+<span id="cb4-10">  </span>
+<span id="cb4-11">}</span>
+<span id="cb4-12"></span>
+<span id="cb4-13">filter_on_subquery <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>() {</span>
+<span id="cb4-14"></span>
+<span id="cb4-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dbGetQuery</span>(con, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"select * from 'taxi_2019_04.parquet' WHERE pickup_at &gt; (select median(pickup_at) from 'taxi_2019_04.parquet')"</span>)</span>
+<span id="cb4-16">  </span>
+<span id="cb4-17">}</span>
+<span id="cb4-18"></span>
+<span id="cb4-19">read_benchmark <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> bench<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mark</span>(</span>
+<span id="cb4-20">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">min_iterations =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>,</span>
+<span id="cb4-21">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">filter_on_variable =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter_on_variable</span>(),</span>
+<span id="cb4-22">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">filter_on_subquery =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter_on_subquery</span>(),</span>
+<span id="cb4-23">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">check =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span></span>
+<span id="cb4-24">)</span>
+<span id="cb4-25"></span>
+<span id="cb4-26">ggplot2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">autoplot</span>(read_benchmark) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> ggplot2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">labs</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">title =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Query run duration"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">subtitle =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Lower is better"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required namespace: tidyr</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/dbt-anti-pattern-using-this_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rm</span>(read_benchmark)</span></code></pre></div>
+</div>
+<p>I know, the gain doesn’t seem THAT big. The difference diminishes if you’re running this in memory. But this is not a very large dataset and the query is straightforward. Furthermore, if you’re using BigQuery, the default dbt method scans more data and theoretically incurs unnecessary costs? I don’t use BQ, so I’m only surmising here. In real-world cases, these difference could be exasperated.</p>
+
+
+</section>
+
+ ]]></description>
+  <guid>https://alaburda.github.io/posts/dbt-anti-pattern-using-this.html</guid>
+  <pubDate>Sun, 15 Dec 2024 14:04:07 GMT</pubDate>
+</item>
+</channel>
+</rss>

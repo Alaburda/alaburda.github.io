@@ -7,6 +7,7 @@ execute:
 
 website:
   title: "Paulius Alaburda"
+  site-url: "https://alaburda.github.io"
   navbar:
     left:
       - href: index.qmd

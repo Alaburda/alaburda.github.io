@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Paulius Alaburda</title>
+<link>https://alaburda.github.io/talks.html</link>
+<atom:link href="https://alaburda.github.io/talks.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.5.52</generator>
+<lastBuildDate>Sun, 15 Dec 2024 13:57:51 GMT</lastBuildDate>
+<item>
+  <title>I Love DuckDB</title>
+  <link>https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>This was a talk at the first ever Business Garden R User Group in 2024.</p>
+<p>https://alaburda.github.io/i-love-duckdb/#/title-slide</p>
+
+
+
+ ]]></description>
+  <guid>https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html</guid>
+  <pubDate>Sun, 15 Dec 2024 13:57:51 GMT</pubDate>
+</item>
+</channel>
+</rss>

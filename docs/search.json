@@ -30,9 +30,9 @@
   {
     "objectID": "blog.html",
     "href": "blog.html",
-    "title": "Blog",
+    "title": "Blogatogg",
     "section": "",
-    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n\n\n\n\n\n\n\nFinding Gaps in Sequences\n\n\n\nSQL\n\n\n\n\n\n\n\nPaulius Alaburda\n\n\nSep 13, 2024\n\n\n\n\n\n\n\n\n\n\n\nGrouping Overlapping Date Ranges\n\n\n\nSQL\n\n\n\n\n\n\n\nPaulius Alaburda\n\n\nSep 13, 2024\n\n\n\n\n\n\n\n\n\n\n\nThe Data Caterer\n\n\n\nprose\n\n\n\n\n\n\n\nPaulius Alaburda\n\n\nSep 13, 2024\n\n\n\n\n\n\n\n\n\n\n\nGrouping Non-Overlapping Date Ranges\n\n\n\nSQL\n\n\n\n\n\n\n\nPaulius Alaburda\n\n\nSep 22, 2024\n\n\n\n\n\n\n\n\n\n\n\nQualifying Events Using Recursive CTEs\n\n\n\nSQL\n\n\n\nAnd the joys of writing trash SQL code\n\n\n\nPaulius Alaburda\n\n\nDec 15, 2024\n\n\n\n\n\n\n\n\n\n\n\ndbt docs runs queries with pivot macros?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndbt anti-pattern: using {{ this }} directly in incremental refreshes\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Order By\n       Default\n         \n          Date - Oldest\n        \n         \n          Date - Newest\n        \n     \n  \n\n\n\n\n\n\n\n\n\n\ndbt docs runs queries with pivot macros?\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ndbt anti-pattern: using {{ this }} directly in incremental refreshes\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nQualifying Events Using Recursive CTEs\n\n\n\n\n\n\nSQL\n\n\n\nAnd the joys of writing trash SQL code\n\n\n\n\n\nDec 15, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nGrouping Non-Overlapping Date Ranges\n\n\n\n\n\n\nSQL\n\n\n\n\n\n\n\n\n\nSep 22, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nFinding Gaps in Sequences\n\n\n\n\n\n\nSQL\n\n\n\n\n\n\n\n\n\nSep 13, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nGrouping Overlapping Date Ranges\n\n\n\n\n\n\nSQL\n\n\n\n\n\n\n\n\n\nSep 13, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nThe Data Caterer\n\n\n\n\n\n\nprose\n\n\n\n\n\n\n\n\n\nSep 13, 2024\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -145,5 +145,68 @@
     "title": "Qualifying Events Using Recursive CTEs",
     "section": "",
     "text": "Erika Pullum recently shared a great SQL brainteaser. Given a list of dates, the first date qualifies as TRUE and all subsequent dates qualify if it’s been more than 90 days since the last one. This requires a recursive CTE to solve because the 90 day gaps depend on the first row in the dataset.\nThe final solution is at the end of the post. Along the way I’ve learned quite a few bits:\n\nAny aggregate function will attempt to return a single row;\nYou can limit the output of recursive CTEs in MySQL by placing the LIMIT clause inside the recursive CTE. You can also limit the output in DuckDB by placing the LIMIT at the end of the final query;\n\n\nCreating the dataset\n\n\ncreate table events as \n                select '2024-06-10'::date as d\n                \n                UNION ALL\n                \n                select '2024-08-20'::date as d\n                \n                UNION ALL\n                \n                select '2024-08-22'::date as d\n                \n                UNION ALL\n                \n                select '2024-09-17'::date as d\n                \n                UNION ALL\n                \n                select '2024-09-19'::date as d\n                \n                UNION ALL\n                \n                select '2024-11-01'::date as d\n                \n                UNION ALL\n                \n                select '2024-12-11'::date as d\n                \n                UNION ALL\n                \n                select '2024-12-21'::date as d\n\n\n\nBad attempt - doing a plain group by\nMy first attempt looked like this - as you can see, it identifies the rows correctly but then starts printing NULLs. The code would print NULLs indefinitely because aggregate functions such as max() or min() always attempt to return a single row. When you run aggregate functions on an empty set, it will return a single row with the value NULL. Recursive CTEs stop only when a loop returns zero rows. So the query would keep running indefinitely - The LIMIT 10 clause ensures it stops running after 10 rows.\n\n\nwith recursive recursive_cte as (\n\n    select \n        min(events.d) as d\n    from events\n\n    union all\n    \n    SELECT \n        min(recursive_events.d) as d\n    from events recursive_events\n    inner join (select max(d) as d from recursive_cte) latest_date\n        on recursive_events.d &gt; latest_date.d + 90 \n)\nselect *\nfrom recursive_cte\nLIMIT 10\n\n\nDisplaying records 1 - 10\n\n\nd\n\n\n\n\n2024-06-10\n\n\n2024-09-17\n\n\n2024-12-21\n\n\nNA\n\n\nNA\n\n\nNA\n\n\nNA\n\n\nNA\n\n\nNA\n\n\nNA\n\n\n\n\n\n\n\nOK attempt - ditching aggregate functions\nMy second attempt worked but it results in an additional subquery inside of a CTEs. Right after writing this I understood that debugging such a query would be very difficult!\n\n\n\nwith recursive recursive_cte as (\n\n    select \n        min(events.d) as d\n    from events\n\n    union all\n    \n    select d\n    from\n    (\n        SELECT \n            recursive_events.d as d,\n            row_number() over (order by recursive_events.d) as rn\n        from events recursive_events\n        inner join (select max(d) as d from recursive_cte) latest_date\n            on recursive_events.d &gt; latest_date.d + 90 \n     ) ranked_dates\n    where rn = 1\n)\nselect *\nfrom recursive_cte\nLIMIT 10\n\n\n3 records\n\n\nd\n\n\n\n\n2024-06-10\n\n\n2024-09-17\n\n\n2024-12-21\n\n\n\n\n\n\n\nGood attempt - aggregates using HAVING\nAs I was brushing my teeth, I remembered about the HAVING clause! I don’t think I’ve ever used HAVING to filter for non-NULL values. Here’s the final solution:\n\n\nwith recursive recursive_cte as (\n\n    select \n        min(events.d) as d\n    from events\n\n    union all\n    \n    SELECT \n        min(recursive_events.d) as d\n    from events recursive_events\n    inner join (select max(d) as d from recursive_cte) latest_date\n        on recursive_events.d &gt; latest_date.d + 90 \n    having min(recursive_events.d) is not null\n    \n)\nselect \n    events.d,\n    case when recursive_cte.d is not null then true else false end as is_after_cooldown\nfrom events\nleft join recursive_cte \n    on events.d = recursive_cte.d\norder by events.d \n\n\n8 records\n\n\nd\nis_after_cooldown\n\n\n\n\n2024-06-10\nTRUE\n\n\n2024-08-20\nFALSE\n\n\n2024-08-22\nFALSE\n\n\n2024-09-17\nTRUE\n\n\n2024-09-19\nFALSE\n\n\n2024-11-01\nFALSE\n\n\n2024-12-11\nFALSE\n\n\n2024-12-21\nTRUE"
+  },
+  {
+    "objectID": "posts/finding-gaps-in-sequences.html",
+    "href": "posts/finding-gaps-in-sequences.html",
+    "title": "Finding Gaps in Sequences",
+    "section": "",
+    "text": "In the SQL Server MVP Deep Dives, Itzik Ben-Gan outlines a SQL solution for finding gaps in sequences. It looks like this:\nSELECT   seqval + 1 AS start_range,   (SELECT MIN(B.seqval)    FROM dbo.NumSeq AS B    WHERE B.seqval &gt; A.seqval) - 1 AS end_range FROM dbo.NumSeq AS A WHERE NOT EXISTS   (SELECT *    FROM dbo.NumSeq AS B    WHERE B.seqval = A.seqval + 1)   AND seqval &lt; (SELECT MAX(seqval) FROM dbo.NumSeq);\nI can’t make heads or tails of this query. This blog post is my attempt to understand it."
+  },
+  {
+    "objectID": "posts/finding-gaps-in-sequences.html#sample-data",
+    "href": "posts/finding-gaps-in-sequences.html#sample-data",
+    "title": "Finding Gaps in Sequences",
+    "section": "Sample Data",
+    "text": "Sample Data\nLet’s create a table with a sequence of numbers from 1 to 10, with a gap at 5:\n\nlibrary(duckdb)\n\nsequence &lt;- data.frame(id = c(1,2,3,11,12,13,31,33,34,35,42))\n\ncon &lt;- dbConnect(duckdb::duckdb())\n\ndbWriteTable(con, \"sequence\", sequence, overwrite = TRUE)\n\nggplot(sequence, aes(x = id, y = 1L)) + geom_point()"
+  },
+  {
+    "objectID": "posts/finding-gaps-in-sequences.html#the-sql-query",
+    "href": "posts/finding-gaps-in-sequences.html#the-sql-query",
+    "title": "Finding Gaps in Sequences",
+    "section": "The SQL Query",
+    "text": "The SQL Query\n\nselect\n  start_seq.id+1 as start_range,\n  (select \n      min(end_seq.id) \n   from sequence as end_seq \n   where end_seq.id &gt; start_seq.id)-1 as end_range\nfrom sequence as start_seq\nwhere not exists (\n  select * \n  from sequence as end_seq \n  where end_seq.id = start_seq.id + 1\n) and start_seq.id &lt; (select max(id) from sequence)\n\nThe idea is to find the first number in a sequence that doesn’t have a successor. This is a common problem in SQL, and the solution is quite elegant. But what if you want to find gaps in a sequence that’s not just a sequence of numbers? What if you want to find gaps in a sequence of dates, for example?"
+  },
+  {
+    "objectID": "posts/the-data-caterer.html",
+    "href": "posts/the-data-caterer.html",
+    "title": "The Data Caterer",
+    "section": "",
+    "text": "I feel like the work of data teams is somewhat similar to running a food catering service. Essentially, you’re developing different dishes in the form of reports, dashboards, tools, plots or ML models. The dishes are made from data and there’s usually an end user that consumes your dish. I find this parallel useful in a few ways."
+  },
+  {
+    "objectID": "posts/the-data-caterer.html#data-sourcing-matters",
+    "href": "posts/the-data-caterer.html#data-sourcing-matters",
+    "title": "The Data Caterer",
+    "section": "Data sourcing matters",
+    "text": "Data sourcing matters"
+  },
+  {
+    "objectID": "posts/the-data-caterer.html#mis-en-place",
+    "href": "posts/the-data-caterer.html#mis-en-place",
+    "title": "The Data Caterer",
+    "section": "Mis-en-place",
+    "text": "Mis-en-place"
+  },
+  {
+    "objectID": "posts/the-data-caterer.html#tracking-data-waste",
+    "href": "posts/the-data-caterer.html#tracking-data-waste",
+    "title": "The Data Caterer",
+    "section": "Tracking data waste",
+    "text": "Tracking data waste\nIf your team is capable of developing ETL pipelines quickly, it’s very easy to end up with redundant pipelines - some may overlap, some may not be used at all.\n“Look, my guys fill this sheet every week, you think you could make a nice dashboard out of it? I would love to show it for our weekly business review.”Sure, as long as they fill"
+  },
+  {
+    "objectID": "posts/the-data-caterer.html#the-fine-dining-experience",
+    "href": "posts/the-data-caterer.html#the-fine-dining-experience",
+    "title": "The Data Caterer",
+    "section": "The fine-dining experience",
+    "text": "The fine-dining experience\nYour clients won’t be coming in every day, you’ll be lucky if they show up more than once. Each customer has specific slide deck restrictions, wants their data arranged in a peculiar order. You’re also striving to provide fresh data but the overhead on that is killing you because you use each source rarely."
+  },
+  {
+    "objectID": "posts/the-data-caterer.html#the-self-service-experience",
+    "href": "posts/the-data-caterer.html#the-self-service-experience",
+    "title": "The Data Caterer",
+    "section": "The self-service experience",
+    "text": "The self-service experience\nEveryone gets a meal, noone is particularly happy because some filter, column or visual was missing that was crucial for their specific use case. They also had to package their own leftovers if they wanted to export them to Excel - oh, the tragedy!"
   }
 ]

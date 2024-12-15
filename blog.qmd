@@ -1,20 +1,19 @@
 ---
-title: "Blog"
+title: "Blogatogg"
+author: ""
+description: "Paulius Alaburda's blog posts"
+page-layout: full
 listing: 
   id: blog-listing
   categories: true
   feed: true
   sort-ui: [date]
-  sort: "date"
+  sort: "date desc"
   contents:
   - "posts/!(template|blog-image|references).qmd"
-  fields: [title, date, author, description, categories]
-  type: grid
-  grid-columns: 1
+  fields: [image, title, date, description, categories]
+  type: default
   image-height: "12em"
-
-website:
-  description: "Blog description"
 ---
 
 ::: {#blog-listing}

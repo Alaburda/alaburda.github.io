@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="">
+<meta name="description" content="Paulius Alaburda’s blog posts">
 
-<title>Blog – Paulius Alaburda</title>
+<title>Blogatogg – Paulius Alaburda</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -78,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-title','listing-date','listing-author','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] }],
+      valueNames: ['listing-image','listing-title','listing-date','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] }],
       
-      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -129,7 +131,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="alternate" type="application/rss+xml" title="Paulius Alaburda" href="blog.xml" data-external="1"></head>
 
 <body class="nav-fixed">
 
@@ -172,23 +174,28 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
     <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="SQL">SQL <span class="quarto-category-count">(4)</span></div><div class="category" data-category="prose">prose <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
+<h1 class="title">Blogatogg</h1>
+</div>
+
+<div>
+  <div class="description">
+    Paulius Alaburda’s blog posts
+  </div>
 </div>
 
 
-
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -200,7 +207,7 @@ window.Quarto = {
 </header>
 
 
-<div id="listing-blog-listing" class="quarto-listing quarto-listing-container-grid">
+<div id="listing-blog-listing" class="quarto-listing quarto-listing-container-default">
 <div class="listing-actions-group">
    <div class="input-group input-group-sm quarto-listing-sort">
      <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
@@ -216,179 +223,200 @@ window.Quarto = {
      </select>
   </div>
 </div>
-<div class="list grid quarto-listing-cols-1">
-<div class="g-col-1" data-index="0" data-categories="SQL" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1729033104577" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
-<a href="./posts/finding-gaps-in-sequences.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Finding Gaps in Sequences
-</h5>
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1729340383753" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
+<div class="thumbnail">
+<p><a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external"></a></p><a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+</a><p><a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external">dbt docs runs queries with pivot macros?</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external">I can’t for the life of me find this documented but apparently queries that use the pivot or unpivot macros are run so that their compiled code becomes available in the…</a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external"></a></p><a href="./posts/dbt-anti-pattern-pivot-macro.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1729616223571" data-listing-reading-time-sort="3" data-listing-word-count-sort="576">
+<div class="thumbnail">
+<p><a href="./posts/dbt-anti-pattern-using-this.html" class="no-external"></a></p><a href="./posts/dbt-anti-pattern-using-this.html" class="no-external">
+<p class="card-img-top"><img src="posts\dbt-anti-pattern-using-this_files\figure-html\unnamed-chunk-3-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/dbt-anti-pattern-using-this.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/dbt-anti-pattern-using-this.html" class="no-external">dbt anti-pattern: using {{ this }} directly in incremental refreshes</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/dbt-anti-pattern-using-this.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/dbt-anti-pattern-using-this.html" class="no-external">If you’re using dbt, the recommended default way to build incremental models looks like this:</a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/dbt-anti-pattern-using-this.html" class="no-external"></a></p><a href="./posts/dbt-anti-pattern-using-this.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="SQL" data-listing-date-sort="1734213600000" data-listing-file-modified-sort="1734271431842" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="951">
+<div class="thumbnail">
+<p><a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external"></a></p><a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external">
+<p><img loading="lazy" src="./posts/posts/img/quantifying-events-using-recursive-ctes.png" class="thumbnail-image" style="height: 12em;"></p>
+</a><p><a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external">Qualifying Events Using Recursive CTEs</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external"></a>
+</div>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
 SQL
 </div>
 </div>
-<div class="card-text listing-description">
-
+<div class="listing-description">
+<a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external">And the joys of writing trash SQL code</a>
 </div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Paulius Alaburda
 </div>
+<div class="metadata">
+<a href="./posts/qualifying-events-using-recursive-ctes.html" class="no-external">
 <div class="listing-date">
-Sep 13, 2024
-</div>
-</div>
-</div>
+Dec 15, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="1" data-categories="SQL" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1727008116452" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="744">
-<a href="./posts/grouping-overlapping-date-ranges.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Grouping Overlapping Date Ranges
-</h5>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="SQL" data-listing-date-sort="1726952400000" data-listing-file-modified-sort="1727010291427" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="986">
+<div class="thumbnail">
+<p><a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external"></a></p><a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external">
+<p class="card-img-top"><img src="posts\grouping-nonoverlapping-date-ranges_files\figure-html\unnamed-chunk-1-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external">Grouping Non-Overlapping Date Ranges</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external"></a>
+</div>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
 SQL
 </div>
 </div>
-<div class="card-text listing-description">
-It’s pretty straightforward to group rows in <code>SQL</code> if their date ranges are consecutive or have fixed gaps.<sup>1</sup> It’s <em>much</em> harder if you want to group overlapping date ranges. I…
+<div class="listing-description">
+<a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external">If you’re a data analyst at a company, it’s VERY likely your company stores some data as a Type 2 slowly-changing dimension. It’s also likely that the way it’s stored may…</a>
 </div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Paulius Alaburda
 </div>
+<div class="metadata">
+<a href="./posts/grouping-nonoverlapping-date-ranges.html" class="no-external">
 <div class="listing-date">
-Sep 13, 2024
-</div>
-</div>
-</div>
+Sep 22, 2024
 </div>
 </a>
 </div>
-<div class="g-col-1" data-index="2" data-categories="prose" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1729259108501" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="229">
-<a href="./posts/the-data-caterer.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-The Data Caterer
-</h5>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="SQL" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1729033104577" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="268">
+<div class="thumbnail">
+<p><a href="./posts/finding-gaps-in-sequences.html" class="no-external"></a></p><a href="./posts/finding-gaps-in-sequences.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+</a><p><a href="./posts/finding-gaps-in-sequences.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/finding-gaps-in-sequences.html" class="no-external">Finding Gaps in Sequences</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/finding-gaps-in-sequences.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
+SQL
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/finding-gaps-in-sequences.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/finding-gaps-in-sequences.html" class="no-external">
+<div class="listing-date">
+Sep 13, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="SQL" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1727008116452" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="744">
+<div class="thumbnail">
+<p><a href="./posts/grouping-overlapping-date-ranges.html" class="no-external"></a></p><a href="./posts/grouping-overlapping-date-ranges.html" class="no-external">
+<p class="card-img-top"><img src="posts\grouping-overlapping-date-ranges_files\figure-html\unnamed-chunk-1-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+</a><p><a href="./posts/grouping-overlapping-date-ranges.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/grouping-overlapping-date-ranges.html" class="no-external">Grouping Overlapping Date Ranges</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/grouping-overlapping-date-ranges.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
+SQL
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/grouping-overlapping-date-ranges.html" class="no-external">It’s pretty straightforward to group rows in <code>SQL</code> if their date ranges are consecutive or have fixed gaps.<sup>1</sup> It’s <em>much</em> harder if you want to group overlapping date ranges. I…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/grouping-overlapping-date-ranges.html" class="no-external">
+<div class="listing-date">
+Sep 13, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="prose" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1729259108501" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="229">
+<div class="thumbnail">
+<p><a href="./posts/the-data-caterer.html" class="no-external"></a></p><a href="./posts/the-data-caterer.html" class="no-external">
+<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+</a><p><a href="./posts/the-data-caterer.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/the-data-caterer.html" class="no-external">The Data Caterer</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/the-data-caterer.html" class="no-external"></a>
+</div>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('prose'); return false;">
 prose
 </div>
 </div>
-<div class="card-text listing-description">
-
+<div class="listing-description">
+<a href="./posts/the-data-caterer.html" class="no-external"></a>
 </div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Paulius Alaburda
 </div>
+<div class="metadata">
+<a href="./posts/the-data-caterer.html" class="no-external">
 <div class="listing-date">
 Sep 13, 2024
 </div>
-</div>
-</div>
-</div>
 </a>
 </div>
-<div class="g-col-1" data-index="3" data-categories="SQL" data-listing-date-sort="1726952400000" data-listing-file-modified-sort="1727010291427" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="986">
-<a href="./posts/grouping-nonoverlapping-date-ranges.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Grouping Non-Overlapping Date Ranges
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
-SQL
-</div>
-</div>
-<div class="card-text listing-description">
-If you’re a data analyst at a company, it’s VERY likely your company stores some data as a Type 2 slowly-changing dimension. It’s also likely that the way it’s stored may…
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Paulius Alaburda
-</div>
-<div class="listing-date">
-Sep 22, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="4" data-categories="SQL" data-listing-date-sort="1734213600000" data-listing-file-modified-sort="1734246045417" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="951">
-<a href="./posts/qualifying-events-using-recursive-ctes.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Qualifying Events Using Recursive CTEs
-</h5>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
-SQL
-</div>
-</div>
-<div class="card-text listing-description">
-And the joys of writing trash SQL code
-</div>
-<div class="card-attribution card-text-small justify">
-<div class="listing-author">
-Paulius Alaburda
-</div>
-<div class="listing-date">
-Dec 15, 2024
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="5" data-listing-file-modified-sort="1729340383753" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
-<a href="./posts/dbt-anti-pattern-pivot-macro.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-dbt docs runs queries with pivot macros?
-</h5>
-<div class="card-text listing-description">
-I can’t for the life of me find this documented but apparently queries that use the pivot or unpivot macros are run so that their compiled code becomes available in the…
-</div>
-<div class="card-attribution card-text-small start">
-<div class="listing-author">
-
-</div>
-</div>
-</div>
-</div>
-</a>
-</div>
-<div class="g-col-1" data-index="6" data-listing-file-modified-sort="1729616223571" data-listing-reading-time-sort="3" data-listing-word-count-sort="576">
-<a href="./posts/dbt-anti-pattern-using-this.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-dbt anti-pattern: using {{ this }} directly in incremental refreshes
-</h5>
-<div class="card-text listing-description">
-If you’re using dbt, the recommended default way to build incremental models looks like this:
-</div>
-<div class="card-attribution card-text-small start">
-<div class="listing-author">
-
-</div>
-</div>
-</div>
-</div>
-</a>
 </div>
 </div>
 <div class="listing-no-matching d-none">
@@ -492,7 +520,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp('/' + window.location.host + '/');
+      var filterRegex = new RegExp("https:\/\/alaburda\.github\.io");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

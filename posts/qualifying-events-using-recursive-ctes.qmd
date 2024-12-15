@@ -70,7 +70,7 @@ create table events as
 
 
 
-# Bad attempt - doing a plain group by
+# Bad attempt - doing a plain aggregation
 
 My first attempt looked like this - as you can see, it identifies the rows correctly but then starts printing NULLs. The code would print NULLs indefinitely because aggregate functions such as `max()` or `min()` always attempt to return a single row. When you run aggregate functions on an empty set, it will return a single row with the value NULL. Recursive CTEs stop only when a loop returns zero rows. So the query would keep running indefinitely - The LIMIT 10 clause ensures it stops running after 10 rows.
 
@@ -97,7 +97,7 @@ LIMIT 10
 
 ```
 
-# OK attempt - ditching aggregate functions
+# OK attempt - using row_number instead of aggregate functions
 
 My second attempt worked but it results in an additional subquery inside of a CTEs. Right after writing this I understood that debugging such a query would be very difficult!
 
@@ -130,7 +130,7 @@ LIMIT 10
 
 ```
 
-# Good attempt - aggregates using HAVING
+# Good attempt - aggregate using HAVING
 
 As I was brushing my teeth, I remembered about the HAVING clause! I don't think I've ever used HAVING to filter for non-NULL values. Here's the final solution:
 
