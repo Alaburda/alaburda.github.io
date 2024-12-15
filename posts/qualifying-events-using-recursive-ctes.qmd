@@ -1,0 +1,169 @@
+---
+title: "Qualifying Events Using Recursive CTEs"
+description: "And the joys of writing trash SQL code"
+author: "Paulius Alaburda"
+date: 2024-12-15
+categories:
+  - SQL
+draft: false
+image: "img/quantifying-events-using-recursive-ctes.png"
+twitter-card:
+  image: "img/quantifying-events-using-recursive-ctes.png"
+open-graph:
+  image: "img/quantifying-events-using-recursive-ctes.png"
+---
+
+Erika Pullum recently [shared](https://bsky.app/profile/erikapullum.bsky.social/post/3lcy2ha372s2n) a great SQL brainteaser. Given a list of dates, the first date qualifies as TRUE and all subsequent dates qualify if it's been more than 90 days since the last one. This requires a recursive CTE to solve because the 90 day gaps depend on the first row in the dataset.
+
+The final solution is at the end of the post. Along the way I've learned quite a few bits:
+
+1. Any aggregate function will attempt to return a single row;
+2. You can limit the output of recursive CTEs in MySQL by placing the LIMIT clause **inside** the recursive CTE. You can also limit the output in DuckDB by placing the LIMIT at the **end** of the final query;
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+library(duckdb)
+
+con <- dbConnect(duckdb::duckdb(), ":memory:")
+
+```
+
+# Creating the dataset
+
+```{sql, connection=con}
+
+create table events as 
+                select '2024-06-10'::date as d
+                
+                UNION ALL
+                
+                select '2024-08-20'::date as d
+                
+                UNION ALL
+                
+                select '2024-08-22'::date as d
+                
+                UNION ALL
+                
+                select '2024-09-17'::date as d
+                
+                UNION ALL
+                
+                select '2024-09-19'::date as d
+                
+                UNION ALL
+                
+                select '2024-11-01'::date as d
+                
+                UNION ALL
+                
+                select '2024-12-11'::date as d
+                
+                UNION ALL
+                
+                select '2024-12-21'::date as d
+
+```
+
+
+
+# Bad attempt - doing a plain group by
+
+My first attempt looked like this - as you can see, it identifies the rows correctly but then starts printing NULLs. The code would print NULLs indefinitely because aggregate functions such as `max()` or `min()` always attempt to return a single row. When you run aggregate functions on an empty set, it will return a single row with the value NULL. Recursive CTEs stop only when a loop returns zero rows. So the query would keep running indefinitely - The LIMIT 10 clause ensures it stops running after 10 rows.
+
+```{sql, connection=con}
+
+with recursive recursive_cte as (
+
+	select 
+		min(events.d) as d
+	from events
+
+	union all
+	
+	SELECT 
+		min(recursive_events.d) as d
+	from events recursive_events
+	inner join (select max(d) as d from recursive_cte) latest_date
+		on recursive_events.d > latest_date.d + 90 
+)
+select *
+from recursive_cte
+LIMIT 10
+
+
+```
+
+# OK attempt - ditching aggregate functions
+
+My second attempt worked but it results in an additional subquery inside of a CTEs. Right after writing this I understood that debugging such a query would be very difficult!
+
+```{sql, connection=con}
+
+
+with recursive recursive_cte as (
+
+	select 
+		min(events.d) as d
+	from events
+
+	union all
+	
+	select d
+	from
+	(
+	    SELECT 
+	    	recursive_events.d as d,
+	    	row_number() over (order by recursive_events.d) as rn
+	    from events recursive_events
+	    inner join (select max(d) as d from recursive_cte) latest_date
+	    	on recursive_events.d > latest_date.d + 90 
+	 ) ranked_dates
+	where rn = 1
+)
+select *
+from recursive_cte
+LIMIT 10
+
+```
+
+# Good attempt - aggregates using HAVING
+
+As I was brushing my teeth, I remembered about the HAVING clause! I don't think I've ever used HAVING to filter for non-NULL values. Here's the final solution:
+
+```{sql, connection=con}
+
+with recursive recursive_cte as (
+
+	select 
+		min(events.d) as d
+	from events
+
+	union all
+	
+	SELECT 
+		min(recursive_events.d) as d
+	from events recursive_events
+	inner join (select max(d) as d from recursive_cte) latest_date
+		on recursive_events.d > latest_date.d + 90 
+	having min(recursive_events.d) is not null
+	
+)
+select 
+	events.d,
+	case when recursive_cte.d is not null then true else false end as is_after_cooldown
+from events
+left join recursive_cte 
+	on events.d = recursive_cte.d
+order by events.d 
+
+```
+
+
+
+
+
+

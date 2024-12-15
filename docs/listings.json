@@ -2,8 +2,11 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/finding-gaps-in-sequences.html",
       "/posts/grouping-overlapping-date-ranges.html",
+      "/posts/the-data-caterer.html",
       "/posts/grouping-nonoverlapping-date-ranges.html",
+      "/posts/qualifying-events-using-recursive-ctes.html",
       "/posts/dbt-anti-pattern-pivot-macro.html",
       "/posts/dbt-anti-pattern-using-this.html"
     ]
