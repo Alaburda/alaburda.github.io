@@ -1,5 +1,5 @@
 ---
-title: "Blogatogg"
+title: "Blog"
 author: ""
 description: "Paulius Alaburda's blog posts"
 page-layout: full
