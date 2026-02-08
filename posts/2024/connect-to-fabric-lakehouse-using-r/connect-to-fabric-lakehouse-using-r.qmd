@@ -1,0 +1,15 @@
+---
+title: "Connect to Fabric Lakehouse using R and Python"
+author: ""
+description: ""
+date: "2024-06-23"
+categories: [R]
+---
+
+# Using a custom DSN
+
+# Using a Service Principal
+
+odbc::dbConnect(odbc::odbc(), driver = "SQL Server 17", Authentication = "ActiveDirectoryServicePrincipal")
+
+# Using Azureclicredential

@@ -1,0 +1,11 @@
+---
+title: "Working with linear mixed models"
+author: "Paulius Alaburda"
+date: "2021-08-15"
+categories: [r, statistics]
+draft: true
+---
+
+Distill is a publication format for scientific and technical writing, native to the web.
+
+Learn more about using Distill at <https://rstudio.github.io/distill>.

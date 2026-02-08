@@ -1,0 +1,18 @@
+---
+title: "Assumptions of the Chi-squared test"
+author: "Paulius Alaburda"
+date: "2020-05-16"
+categories: [r, statistics]
+---
+
+Having written the post about the Chi-squared test, I thought I would list the assumptions of the Chi-square test and null hypothesis testing in general.
+
+So the one thing I was taught was that the p value is the probability of getting the observed data if you were to repeat the experiment lots more. I don't think I fully understood the implications of that. The $\chi^2$ value you calculate is basically just one value out of the whole distribution and doing the test does not explain the origin of the data. In a way, a survey can be thought of a data generation process. If you get a high Chi-squared value and a significant p value, you assume that the data in the survey are associated. However, 5 per cent of the time independent data will yield large Chi-squared values. Replication here would be really helpful but usually it doesn't happen.
+
+Furthermore, the Chi-squared distribution is continuous (as in, it can have any value) while both Poisson and the Binomial are discrete (they only generate whole numbers) distributions. If your sample is small, the distributions do not converge to the normal distribution and the calculated Chi-squared value then does not really follow a Chi-squared distribution. Violating the assumption of sufficient sample size actually inflates the test statistic (the goodness of fit value and the Chi-squared test value). That in turn returns significant p values more often, giving false positive results. The answer to this has been Yates' continuity correction in 1934 but the correction is basically a hack[^1].
+
+Finally, the Chi-squared test assumes the data are independent. If you sample the same hospital or your observations are related, you will tend to drive up your false positive rate as well.
+
+There are a few solutions, fortunately. One, you can use the Fisher's exact test for small sample sizes. Also, if you think your data is associated (or rather, paired), you could use the McNemar test or the Cochran test. The latter is often used to compare agreement between data and can frequently be found in methods papers to show that the method works similarly regardless of the person using it.
+
+[^1]: Learning with R by Danielle Navarro explains this in more detail.

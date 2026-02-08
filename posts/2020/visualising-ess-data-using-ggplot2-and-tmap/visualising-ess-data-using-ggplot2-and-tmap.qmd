@@ -1,0 +1,64 @@
+---
+title: "Visualising ESS data using ggplot2 and tmap"
+author: "Paulius Alaburda"
+date: "2020-10-25"
+categories: [r]
+freeze: true
+---
+
+```{r, echo = FALSE, warning=FALSE, message = FALSE}
+#| eval: false
+
+library(sf)
+library(dplyr)
+library(tmap)
+library(readr)
+```
+
+I stumbled across rOpenSci's package [essurvey](https://github.com/ropensci/essurvey) that contains data from the European Social Survey (ESS) for European countries, including Lithuania! Also, tmap has a lot of excellent resources to get a head start, so this post shows how to access ESS data and visualise it with tmap.
+
+## Downloading ESS data
+
+Downloading ESS data is fairly straightforward - register your email in the ESS and start pulling data! I recommend installing the development version because the stable version was downloading .zip files that Windows couldn't extract. To replicate this post, you should use:
+
+```{r, eval = FALSE}
+import_country("Lithuania", 9)
+```
+
+I didn't want to disclose my email here, so I have downloaded the data separately.
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#| eval: false
+
+ess <- haven::read_spss("data/ESS9LT.sav")
+```
+
+## Visualising with tmap
+
+All plotting packages depend on shapefiles. For Europe, it's best to download the map from [GISCO](https://ec.europa.eu/eurostat/web/gisco/geodata/reference-data/administrative-units-statistical-units/countries). However, the map does not have municipality data for Lithuania. Fortunately, the shapefile is available over the [OpenMap project](https://shapes.openmap.lt/).
+
+This is how to build a basic tmap plot:
+
+```{r}
+#| eval: false
+
+lt_map <- read_sf("data/admin_ribos.shp")
+
+lt_map_sen <- lt_map %>% filter(ADMIN_LEVE == 4)
+
+news <- ess %>%
+  group_by(region = labelled::to_factor(region)) %>%
+  summarise(`Internet usage` = mean(netustm, na.rm = TRUE)) %>%
+  mutate(region = as.character(region)) %>%
+  mutate(region = case_when(region == "Klaipedos apskritis" ~ "Klaipėdos apskritis",
+                            region == "Šiauliu apskritis" ~ "Šiaulių apskritis",
+                            region == "Taurages apskritis" ~ "Tauragės apskritis",
+                            region == "Telšiu apskritis" ~ "Telšių apskritis",
+                            TRUE ~ region))
+
+lt_plot <- lt_map_sen %>% left_join(news, by = c("NAME" = "region"))
+
+tm_shape(lt_plot) +
+  tm_fill("Internet usage") +
+  tm_polygons()
+```

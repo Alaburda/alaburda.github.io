@@ -1,0 +1,83 @@
+---
+title: "Micro-improvement for window functions"
+description: "A very small change leads to a very small improvement"
+author: "Paulius Alaburda"
+date: 2025-01-19
+categories:
+  - SQL
+draft: false
+---
+
+The other day I was fiddling with a silver data layer at our data warehouse to ensure that the tables are built reasonably fast. We have one table that is made up of a few joined tables and a few window functions. It was clear that building a joined table and then adding the windowed columns afterwards was faster. What surprised me was that adding the window functions was faster by building them in a CTE and joining to the original table. Apparently you can replicate this in DuckDB:
+
+```{r}
+#| cache: false
+
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(duckdb)
+library(ggplot2)
+
+
+generate_intervals <- function(date_from = "2024-07-01",
+                               groups = 3,
+                               duration = 10,
+                               gaps = 1:2,
+                               n = 10) {
+
+  data.frame(id = 1:(n*groups),
+             uuid_1 = uuid::UUIDgenerate(n*groups),
+             uuid_2 = uuid::UUIDgenerate(n*groups),
+             uuid_3 = uuid::UUIDgenerate(n*groups),
+             uuid_4 = uuid::UUIDgenerate(n*groups),
+             group_id = as.character(rep(1:groups,each = n))) %>%
+    group_by(group_id) %>%
+    mutate(duration = sample.int(duration, n, replace = TRUE),
+           gap = c(0,sample(gaps, n-1, replace = TRUE)),
+           date_kernel = as.Date(date_from)) %>%
+    mutate(lag_duration = replace_na(lag(duration),0),
+           cumulative_duration = cumsum(duration),
+           cumulative_gap = cumsum(gap)) %>%
+    mutate(cumulative_lag_duration = cumsum(lag_duration)) %>%
+    mutate(date_from = date_kernel %m+% days(cumulative_gap+cumulative_lag_duration),
+           date_to = date_kernel %m+% days(cumulative_gap+cumulative_duration))
+
+}
+
+intervals_10m <- generate_intervals(date_from = "2024-07-01", groups = 10000, duration = 10, gaps = 0, n = 100)
+
+con <- dbConnect(duckdb::duckdb(), ":memory:")
+
+dbWriteTable(con, "intervals", intervals_10m)
+
+```
+
+```{r}
+
+interval_benchmark <- bench::mark(window_joined = dbGetQuery(con, "with tmp as (
+                 select
+                    id,
+                    lead(date_from,1) over (partition by group_id order by id) as lead_date_from
+                 from intervals)
+                 select
+                    intervals.*,
+                    tmp.lead_date_from
+                 from intervals
+                 left join tmp
+                  on tmp.id = intervals.id"),
+            window_together = dbGetQuery(con, "select
+                    intervals.*,
+                    lead(date_from,1) over (partition by group_id order by id) as lead_date_from
+                 from intervals"),
+            check = FALSE)
+
+autoplot(interval_benchmark)
+
+```
+
+
+
+
+
+

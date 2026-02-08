@@ -1,0 +1,11 @@
+---
+title: "How to Use a Date Dimension"
+editor: visual
+draft: true
+---
+
+In my previous post, I showed how to create a date dimension but didn't explain why it's useful. Here's a few use cases for a date dimension:
+
+-   You want to aggregate by odd aggregates
+
+-   You want to aggregate by period where a period could contain 0 rows

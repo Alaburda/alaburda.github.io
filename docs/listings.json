@@ -1,20 +1,33 @@
 [
   {
-    "listing": "/blog.html",
-    "items": [
-      "/posts/dbt-anti-pattern-pivot-macro.html",
-      "/posts/dbt-anti-pattern-using-this.html",
-      "/posts/qualifying-events-using-recursive-ctes.html",
-      "/posts/grouping-nonoverlapping-date-ranges.html",
-      "/posts/finding-gaps-in-sequences.html",
-      "/posts/grouping-overlapping-date-ranges.html",
-      "/posts/the-data-caterer.html"
-    ]
-  },
-  {
     "listing": "/talks.html",
     "items": [
       "/talks/2024-05-16-i-love-duckdb.html"
+    ]
+  },
+  {
+    "listing": "/blog.html",
+    "items": [
+      "/posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html",
+      "/posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html",
+      "/posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html",
+      "/posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html",
+      "/posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html",
+      "/posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html",
+      "/posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html",
+      "/posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html",
+      "/posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.html",
+      "/posts/2024/convert-seconds-to-hh-mm-ss-in-dax/convert-seconds-to-hh-mm-ss-in-dax.html",
+      "/posts/2023/create-date-dimension/create-date-dimension.html",
+      "/posts/2021/swift-start-with-wingspan-data/swift-start-with-wingspan-data.html",
+      "/posts/2021/my-favourite-things-books/my-favourite-things-books.html",
+      "/posts/2021/3-ways-to-turbocharge-your-excel-team/3-ways-to-turbocharge-your-excel-team.html",
+      "/posts/2020/visualising-ess-data-using-ggplot2-and-tmap/visualising-ess-data-using-ggplot2-and-tmap.html",
+      "/posts/2020/log-x-1-and-log-1-x/log-x-1-and-log-1-x.html",
+      "/posts/2020/assumptions-of-the-chi-squared-test/assumptions-of-the-chi-squared-test.html",
+      "/posts/2020/how-to-chi-squared-test/how-to-chi-squared-test.html",
+      "/posts/2020/student-reported-p-values/student-reported-p-values.html",
+      "/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications.html"
     ]
   }
 ]

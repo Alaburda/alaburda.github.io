@@ -10,7 +10,7 @@ listing:
   sort-ui: [date]
   sort: "date desc"
   contents:
-  - "posts/!(template|blog-image|references).qmd"
+  - "posts/**/*.qmd"
   fields: [image, title, date, description, categories]
   type: default
   image-height: "12em"

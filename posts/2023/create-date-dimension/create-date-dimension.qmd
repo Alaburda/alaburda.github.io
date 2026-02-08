@@ -1,0 +1,117 @@
+---
+title: "Create a Date Dimension"
+author: "Paulius Alaburda"
+date: "2023-06-29"
+categories: [data warehouse]
+---
+
+# What's a date dimension anyway?
+
+I have been searching for a clean solution to building a date dimension so here I am writing my own. In R!
+
+If you don't speak Kimballese, a date dimension is a calendar. It contains a row for each day in a year as well as attributes about those dates. For example, a date dimension for 2023 would contain 365 rows and have columns such as week number, day of week, whether the day is a holiday etc. There's really no correct way of building a date dimension as different organisations might have different ways of aggregating data across time but it is useful to have a "starter" table.
+
+# Building the date table
+
+First, we'll build the table using `lubridate`. My locale is Lithuanian, but your output should adapt to your locale:
+
+```{r}
+
+library(lubridate)
+library(tibble)
+
+date_dimension <- tibble(date = seq(as.Date('2011-01-01'),as.Date('2011-01-31'),by = 1),
+                         full_date_description = format(date, format="%Y m. %B %d d."),
+                         day_of_week = wday(date, label=FALSE, week_start = 1),
+                         day_of_week_name = wday(date, label=TRUE, abbr = FALSE),
+                         calendar_iso_week = isoweek(date),
+                         calendar_week = week(date),
+                         calendar_month = month(date),
+                         calendar_month_name = month(date, label = TRUE, abbr = FALSE),
+                         calendar_quarter = quarter(date),
+                         calendar_quarter_name = paste0("Q",quarter(date)),
+                         calendar_year = year(date),
+                         is_weekday = as.integer(wday(date, week_start = 1) < 6))
+
+head(date_dimension)
+
+```
+
+If this were a typical date dimension post, all you would have to do is adjust the date range and either export the table or write to a database. But this date dimension could be improved:
+
+* It doesn't contain bank holidays
+* If your use case is different enough from mine, you would have to edit more than the date range to get a desired result.
+
+# Let's add holidays
+
+To get bank holidays, you have a few options:
+
+* [Nager.Date](https://date.nager.at/Api) - free to use, no sign up required
+* [abstract](https://www.abstractapi.com/api/holidays-api) - free tier available but sign up required
+* [Calendarific](https://calendarific.com/) - free tier available but sign up required
+* [The Holiday API](https://holidayapi.com/) - free for previous years but paid for current and future years
+* Scrape [Public Holidays Global](publicholidays.com) - free to use but I haven't checked their scraping policy
+
+Let's use Nager.Date for this exercise. The API returns a list of dates that are bank holidays with quite a few useful attributes but I am keeping just the English and local holiday names.
+
+```{r}
+
+get_holidays <- function(country_code = "lt", year = "2023") {
+
+  rs <- httr::GET(glue::glue("https://date.nager.at/api/v3/publicholidays/{year}/{country_code}"))
+
+  out <- httr::content(rs) %>%
+    tibble::enframe() %>%
+    dplyr::select(value) %>%
+    tidyr::unnest_wider(value) %>%
+    dplyr::transmute(date = as.Date(date),
+           holiday_name_local = localName,
+           holiday_name = name)
+
+  return(out)
+
+}
+
+get_holidays()
+
+```
+
+# Make it a function
+
+To turn the code above into a function we are making the following changes:
+
+* Pulling start and end dates, date format, week start number and country code as function arguments
+* Passing the years from the date dimension to the get_holiday function. I want to create tables that span multiple years so we're using purrr::map_df to get holidays for multiple years.
+
+```{r}
+
+date_dimension <- function(date_from, date_to, full_date_format = "%Y m. %B %d d.", week_start = 1, country_code = "LT") {
+
+  date_skeleton <- tibble(date = seq(as.Date(date_from),as.Date(date_to),by = 1),
+                          full_date_description = format(date, format=full_date_format),
+                          day_of_week = wday(date, label=FALSE, week_start = week_start),
+                          day_of_week_name = wday(date, label=TRUE, abbr = FALSE),
+                          calendar_iso_week = isoweek(date),
+                          calendar_week = week(date),
+                          calendar_month = month(date),
+                          calendar_month_name = month(date, label = TRUE, abbr = FALSE),
+                          calendar_quarter = quarter(date),
+                          calendar_quarter_name = paste0("Q",quarter(date)),
+                          calendar_year = year(date),
+                          is_weekday = as.integer(wday(date, week_start = 1) < 6))
+
+  holidays <- purrr::map_df(unique(date_skeleton$calendar_year), ~get_holidays(country_code = country_code, year = .))
+
+  out <- date_skeleton %>%
+    dplyr::left_join(holidays, by = "date") %>%
+    dplyr::mutate(is_workday = is_weekday*is.na(holiday_name))
+
+  return(out)
+
+}
+
+date_dimension("2024-01-01","2024-05-01")
+
+```
+
+That's it! If you want to learn more about date dimensions, be sure to read Kimball's Data Warehousing Toolkit Chapter 3.

@@ -1,0 +1,22 @@
+---
+title: "Convert seconds to hh:mm:ss in DAX"
+author: "Paulius Alaburda"
+description: ""
+date: "2024-06-23"
+categories: [pbi]
+---
+
+Solutions to convert an integer into a time format in DAX are not great. The default should be `FORMAT([seconds], "hh:mm:ss")` but it doesn't work on a hierachical two-way matrix. Here's my preffered way:
+
+https://stackoverflow.com/questions/45584262/how-to-convert-seconds-into-hhmm-format-in-power-bi
+
+```
+Measure =
+  VAR _hours_fraction = seconds/3600
+  VAR _hours = TRUNC(_hours_fraction)
+  VAR _minutes_fraction = (_hours_fraction - _hours)*60
+  VAR _minutes = TRUNC(_minutes_fraction)
+  VAR _seconds = ROUND((_minutes_fraction - _minutes)*60, 0)
+
+  RETURN(TIME(_hours, _minutes, _seconds))
+```

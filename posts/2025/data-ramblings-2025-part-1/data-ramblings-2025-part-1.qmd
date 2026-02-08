@@ -1,0 +1,22 @@
+---
+title: "Data Ramblings 2025 (part 1)"
+date: 2025-02-26
+---
+
+Over time, my head fills up with ideas about the data world. These ideas are usually ramblings about how the current tooling is lacking capabilities. On the one hand, putting down these days feels like yelling into the void. But if I don't put the thoughts down, they'll just continue living in my head. I also hope that someone finds this post and goes "hey Paulius, you're wrong about this, look!". I would love to be proven wrong! 
+
+# BI tools needs to expressive AND opinionated 
+
+People really, really do not like Power BI's viz capabilities. PBI gets you a decent basic chart but it's missing so many features for heavy use. For example, you can't create chart templates or have a theme for all of them - you need to do that either by coding your own visual and creating .json files externally. Also, I'm pretty sure EVERYONE reports KPIs using the same Calendar dimensions but there are no native Calendar functionalities.
+
+First, BI tools need to be expressive - if I want my chart to look a certain way, the tool should expose an API that allows me to do whatever I please. ggplot2 nails this - the basic object is a coordinate system and you can drop any geom on it. I can also extend it by adding anything I or the community comes up with. Not so with Power BI - you need to start with a predefined visual and you are limited by the options that are available. 
+
+On the other hand, I also feel like BI tools could be more opinionated. BI tools are not general purpose plotting tools so charts could be more catered towards BI use cases - for example, if I am plotting a line chart and I have a date dimension, maybe inherently allow me to plot a moving average, or YoY differences, or allow me to toggle between days/months/weeks/ISO weeks. Or give me a filter visual for dates that implicitly defaults to some time period that I could override. There's a lot of examples to start from too - for example, IBCS has a template [reference](https://www.ibcs.com/resource_category/chart-templates/).
+
+These may seem orthogonal to each other - they're not. ggplot2 is VERY open ended but it enables you to build your own opinionated visuals. For example, [tidyplots](https://tidyplots.org/) is awesome because it is opinionated around being a statistical plotting library - if you're not creating a chart for publication, it's ok, the package is not for you. In Power BI, you are shit out of luck - if you want anything custom, you either need to learn js or buy a license for a 3rd party visual. The "out of the box" visuals are not expressive enough to create opinionated visuals.
+
+# Data Quality Tools need to focus on business rules
+
+I haven't found a Data Quality tool that goes beyond checking basic rules. Like, thanks, I can run my own DISTINCT rules and GROUP BYs. What's missing for me is a framework that embraces business rule checks. dbt gets pretty close - you write a SQL query that returns rows that are "wrong". However, chances are that the output is going to be different between different checks, i.e. a test running on customers would return customer columns, a test running on transactions, would return transactions - the table schemas are different. The problem lies in the fact that BI tool expect a stable schema and you really really want to expose these data quality checks to the end user. To me, what's missing is a light framework that would sport a UI for checking all of these rules. Better yet, something that I       
+
+

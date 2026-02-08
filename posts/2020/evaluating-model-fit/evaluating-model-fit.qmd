@@ -1,0 +1,38 @@
+---
+title: "Evaluating Model Fit"
+author: "Paulius Alaburda"
+date: "2020-12-03"
+categories: [r, statistics]
+draft: true
+freeze: true
+---
+
+I have to be honest with myself: for many years I have been notoriously ignoring checking model fit and whether I am making valid inferences. I can attribute two reasons for that: one, a lot of researchers don't really care whether the inference is valid as long as it produces reasonable[^1] results, and two, I usually felt like that even if you do find that your model is suboptimal, there's not much that you can do about it. Now I know that's not the case: you can use non-linear models, GAMs, Bayesian models, specify informative priors or use shrinkage. I would like to dissipate my ignorance, and this blogpost is a collection of tools to make model fitting and evaluation easier.
+
+## Why evaluate anyway?
+
+There are two great reasons to evaluate model fit. In an academic setting, you need to have valid inferences to design better studies which ultimately lead to clinical trials and clinical decisions. In industry, valid inference can get you ahead when evaluating new products, client behavior. In either scenario, good inference can help everyone and poor inference cost money and lives.
+
+## Linear Model Evaluation
+
+```{r, echo = FALSE, warning = FALSE, message = FALSE}
+#| eval: false
+
+library(readr)
+library(janitor)
+library(gglm)
+
+outcome_data <- read_csv("data/2005_-_2015_Graduation_Outcomes.csv") %>% clean_names()
+```
+
+Evaluating linear models is fairly straightforward. There are four plots that tell you about how the model behaves.
+
+```{r}
+#| eval: false
+
+m1.1 <- lm(data = outcome_data, percent_of_cohort_total_grads ~ cohort_year)
+
+gglm(m1.1)
+```
+
+[^1]: Or statistically significant
