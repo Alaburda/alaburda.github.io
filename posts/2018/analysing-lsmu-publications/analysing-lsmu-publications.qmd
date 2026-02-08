@@ -3,7 +3,6 @@ title: "Analysing LSMU publications"
 author: "Paulius Alaburda"
 date: "2018-09-10"
 categories: [r, lsmu]
-freeze: true
 ---
 
 Hello! I have recently finished my master's degree and finished my summer projects! With spare time on my hands, I have finally gotten around to analysing the full list of my university's publications.
@@ -19,27 +18,20 @@ The Lithuanian University of Health Sciences is one of the biggest universities 
 The dataset contains every indexed research paper that contains a co-author from the Lithuanian University of Health Sciences. The total number of publications as of May 31st is 5578 and the database was last updated on July 28th.
 
 ```{r, warning = F, message = F}
-#| eval: false
 
 library(tidyverse)
-library(tidytext)
 library(widyr)
 library(igraph)
 library(ggraph)
-library(highcharter)
 library(RColorBrewer)
-library(colorRamps)
 library(knitr)
-library(gganimate)
 library(lubridate)
 library(ggrepel)
-library(widgetframe)
-library(magick)
 
 data <- read_csv("data/LSMU_publication_history.csv")
 
 data[data == "n/a"] <- NA
-data <- data %>% mutate_at(vars(`Publication Date`:`Journal Impact Factor`), funs(as.numeric))
+data <- data %>% mutate(across(`Publication Date`:`Journal Impact Factor`, as.numeric))
 ```
 
 The dataset uses "n/a" instead of R's NA, therefore some tidying is required. Because n/a is recognised as a character, we also need to turn some of the character columns to numeric. I will be doing some data wrangling later but for now this suits our needs.
@@ -51,7 +43,6 @@ The dataset does have a few limitations: InCites only lists the first five autho
 Lithuania has gained independence in 1990 and LSMU has merged with the Veterinary academy in 2010. What is the distribution of papers throughout the years?
 
 ```{r, echo = F, warning = F}
-#| eval: false
 
 (data %>%
   group_by(`Publication Date`) %>%
@@ -68,8 +59,7 @@ The period of 2008-2011 is interesting - the number of publications increased de
 
 Here is a plot with veterinary sciences separated from the rest of the papers:
 
-```{r, echo = F, warning = F}
-#| eval: false
+```{r, echo = F, warning = F, message = F}
 
 data %>%
   mutate(Veterinary = grepl("VETERINARY",`Research Area`)) %>%
@@ -87,8 +77,7 @@ I needed to use grepl because each paper is assigned multiple research areas. Th
 
 There are a lot of research area categories - certainly not enough to plot them elegantly! Let's try limiting it to the categories that have 150 or more publications.
 
-```{r, echo = F, warning = F}
-#| eval: false
+```{r, echo = F, warning = F, message = F}
 
 large_areas <- data %>%
   separate(`Research Area`, sep = "; ", into = paste0("Area_",seq(from = 1, to = 5))) %>%
@@ -112,14 +101,13 @@ data_research_areas %>%
   ggplot(aes(x =`Publication Date`, y = Publications, col = Area)) +
   geom_line() +
   facet_wrap(~Area, labeller = label_wrap_gen(20)) +
-  guides(col = FALSE) +
+  guides(col = "none") +
   theme_bw()
 ```
 
 It does seem cardiac sciences have a similar distribution compared to the overall publication distribution. After tinkering around with plots and failing to find the root cause of the dip, the question is, whose research output decreased the most?
 
-```{r, echo = F}
-#| eval: false
+```{r, echo = F, message = F}
 
 research_difference_all <- data_research_areas %>%
   group_by(Area,`Publication Date`) %>%
@@ -137,7 +125,7 @@ bind_rows(research_difference_top,research_difference_bot) %>%
   ggplot(aes(x = reorder(Area, difference), y = difference, fill = ifelse(difference > 0,"navy","coral"))) +
   geom_col() +
   coord_flip() +
-  guides(fill = FALSE) +
+  guides(fill = "none") +
   labs(x = "Research area", y = "Difference between 2009 and 2011", title = "6 most and least affected research areas") +
   theme_bw()
 ```
@@ -151,7 +139,6 @@ It is pretty evident that the volume of research has increased throughout the ye
 First, it's interesting to note that almost half (45.32%) of all research papers do not get cited at all:
 
 ```{r, echo = F}
-#| eval: false
 
 data %>%
   group_by(`Times Cited`) %>%
@@ -167,42 +154,40 @@ It would be interesting to check how this distribution compares to other univers
 
 Instead of using the number of citations as a metric, I will use InCites' "[Percentile in Subject Area](http://ipscience-help.thomsonreuters.com/inCites2Live/4361-TRS.html)", which shows the relative position of your paper compared to those in the same field. Also, I am going to take the year of publication into account so that we can see how publishing changed over time.
 
-To combine all of this, let's use gganimate! I am going to label the largest research areas in the graph - labelling all of them would clutter the plot!
+The plot below shows the cumulative number of papers (x axis) against the cumulative average percentile in the subject area (y axis) for each research area, at the latest available year. The largest research areas are labelled:
 
-```{r, echo = F}
-#| eval: false
+```{r, echo = F, warning = F, message = F}
 
-p <- data_research_areas %>%
+p_data <- data_research_areas %>%
   group_by(Area,`Publication Date`) %>%
   summarise(Papers = n(),
             Percentile = sum(`Percentile in Subject Area`, na.rm = TRUE)) %>%
   mutate(Papers_cum = cumsum(Papers),
-         Percentile_cum = cumsum(Percentile),
-         `Publication Date` = as.Date(as.character(`Publication Date`), format = "%Y"),
-         Area_to_label = ifelse(Papers_cum > 300,Area,"")) %>%
+         Percentile_cum = cumsum(Percentile)) %>%
   mutate(Percentile_cumavg = 100-Percentile_cum/Papers_cum) %>%
-  ggplot(aes(x = Papers_cum, y = Percentile_cumavg, colour = Area, label = Area_to_label)) +
-    geom_point(alpha = 0.7, show.legend = FALSE, aes(size = Papers)) +
+  filter(`Publication Date` == max(`Publication Date`)) %>%
+  ungroup() %>%
+  mutate(Area_to_label = ifelse(Papers_cum > 300, Area, ""))
+
+ggplot(p_data, aes(x = Papers_cum, y = Percentile_cumavg, label = Area_to_label)) +
+  geom_point(alpha = 0.7, aes(size = Papers, colour = Area), show.legend = FALSE) +
   geom_hline(linetype = "dotted", yintercept = 50) +
-  geom_text() +
-  theme(legend.position="none") +
+  geom_text_repel(size = 3, max.overlaps = 20) +
   annotate("text", label = "Above average", y = 55, x = 300) +
   annotate("text", label = "Below average", y = 45, x = 300) +
-    labs(title = "Year: {frame_time}", x = "Total number of papers", y = "Cumulative average percentile in subject area") +
-    transition_time(`Publication Date`) +
-    ease_aes("linear")
-
-animate(p, 100, 10)
+  labs(x = "Total number of papers", y = "Cumulative average percentile in subject area") +
+  theme_bw()
 ```
 
-I inversed the percentiles in the plot - the 100th percentile is what every paper should be aiming for and the 0th percentile indicates that a paper has not been cited yet. It's interesting to see small categories fade in and out of the plot. The plot also shows which areas suffer from publication bloat. In spite of that, around 2017, the quality of cardiovascular and public health papers increased slightly! Also, one of the bigger categories to uphold a higher percentile value is gastroenterology -- kudos to them! Overall, the plot looks promising - even though the university produces research that gets outranked by other universities, over time, a lot of the categories have had their percentiles increase.
+I inversed the percentiles in the plot - the 100th percentile is what every paper should be aiming for and the 0th percentile indicates that a paper has not been cited yet. The plot shows which areas suffer from publication bloat. Overall, the plot looks promising - even though the university produces research that gets outranked by other universities, a lot of the categories have had their percentiles increase over time.
 
 ## Who works with whom?
 
 Since the publications have authors listed alongside in the data, I would like to know whether research groups work independently or cooperate with other groups. Unfortunately, InCites provides only the first 5 authors of each paper. Obviously, this means that we lose any information about authors who are credited after the fifth author. But more importantly, usually papers list the supervisor as the last author. This means that some of the most important connections between authors may become lost. This may cause some of the author clusters to be isolated when in fact they are connected by someone. *Finally*, I have added a threshold of 4 publications to show common authorship. Adding more produced a highly interconnected plot that was hard to parse. With these caveats in mind, let's look at clusters of authors!
 
-```{r tidying, echo = F, warning = F}
-#| eval: false
+```{r, echo = F, warning = F, message = F}
+#| fig-width: 10
+#| fig-height: 10
 
 author_names <- data %>%
   separate(Authors, sep = ";", into = paste0("Author_", seq(from = 1, to = 5))) %>%
@@ -228,40 +213,30 @@ author_area <- author_names %>%
   group_by(Author) %>%
   filter(Number == max(Number)) %>%
   ungroup() %>%
-  distinct(Author, .keep_all = TRUE) %>%
-  rename(item1 = Author)
-```
-
-```{r, echo = F, warning = F}
-#| eval: false
+  distinct(Author, .keep_all = TRUE)
 
 author_pairs <- author_names %>%
   pairwise_count(Author, Link, sort = TRUE) %>%
-  filter(n > 4) %>%
-  left_join(author_area, by = "item1")
-
-color_area <- tibble(area_palette = colorRampPalette(brewer.pal(8,"Set1"))(length(levels(as.factor(author_pairs$Area)))),
-       Area = levels(as.factor(author_pairs$Area))
-)
-
-author_info <- author_pairs %>%
-  distinct(item1, .keep_all = TRUE) %>%
-  left_join(color_area, by = "Area")
+  filter(n > 4)
 
 wc <- author_pairs %>%
-  graph_from_data_frame()
+  graph_from_data_frame(directed = FALSE)
 
-V(wc)$publications <- author_info$Number
-V(wc)$Research <- author_info$Area
-V(wc)$color <- author_info$area_palette
+# Add research area info to graph vertices
+vertex_areas <- tibble(Author = V(wc)$name) %>%
+  left_join(author_area, by = "Author")
 
-hchart_nodechart <- hchart(wc, layout = layout_with_fr)
-frameWidget(hchart_nodechart, height = '400')
+V(wc)$Area <- vertex_areas$Area
+
+ggraph(wc, layout = "fr") +
+  geom_edge_link(alpha = 0.2) +
+  geom_node_point(aes(colour = Area), size = 2, show.legend = FALSE) +
+  geom_node_text(aes(label = name), size = 2, repel = TRUE, max.overlaps = 15) +
+  theme_void() +
+  labs(title = "Author collaboration network (co-authorship > 4 papers)")
 ```
 
 Luckily, the clusters are not completely isolated, suggesting that research teams do collaborate at the university. It's interesting to see which research groups work together -- an obvious example that is reflected in the plot is pulmonology, allergology and laryngology. In certain clusters, it is pretty easy to see department heads because they are in the center of their respective clusters. Also, some teams do seem to work independently, however I wouldn't make any conclusions based on the limitations of the dataset and the plot. Nonetheless, we did get some insights from the visualisation!
-
-The plot was built using highcharter - I have tried to initially use plotly to make it interactive, however, coding in highcharter proved to be more convenient. Also, since each paper has multiple research areas, so too does each author have multiple areas. I have kept the research area in which an author has produced the most publications.
 
 ## In conclusion
 

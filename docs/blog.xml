@@ -6954,53 +6954,35 @@ background-color: null;
 font-style: inherit;">library</span>(tidyverse)</span>
 <span id="cb1-2"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(tidytext)</span>
+font-style: inherit;">library</span>(widyr)</span>
 <span id="cb1-3"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(widyr)</span>
+font-style: inherit;">library</span>(igraph)</span>
 <span id="cb1-4"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(igraph)</span>
+font-style: inherit;">library</span>(ggraph)</span>
 <span id="cb1-5"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(ggraph)</span>
+font-style: inherit;">library</span>(RColorBrewer)</span>
 <span id="cb1-6"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(highcharter)</span>
+font-style: inherit;">library</span>(knitr)</span>
 <span id="cb1-7"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(RColorBrewer)</span>
+font-style: inherit;">library</span>(lubridate)</span>
 <span id="cb1-8"><span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">library</span>(colorRamps)</span>
-<span id="cb1-9"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(knitr)</span>
-<span id="cb1-10"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(gganimate)</span>
-<span id="cb1-11"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(lubridate)</span>
-<span id="cb1-12"><span class="fu" style="color: #4758AB;
-background-color: null;
 font-style: inherit;">library</span>(ggrepel)</span>
-<span id="cb1-13"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(widgetframe)</span>
-<span id="cb1-14"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(magick)</span>
-<span id="cb1-15"></span>
-<span id="cb1-16">data <span class="ot" style="color: #003B4F;
+<span id="cb1-9"></span>
+<span id="cb1-10">data <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">read_csv</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"data/LSMU_publication_history.csv"</span>)</span>
-<span id="cb1-17"></span>
-<span id="cb1-18">data[data <span class="sc" style="color: #5E5E5E;
+<span id="cb1-11"></span>
+<span id="cb1-12">data[data <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -7009,15 +6991,15 @@ background-color: null;
 font-style: inherit;">&lt;-</span> <span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">NA</span></span>
-<span id="cb1-19">data <span class="ot" style="color: #003B4F;
+<span id="cb1-13">data <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> data <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%&gt;%</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">mutate_at</span>(<span class="fu" style="color: #4758AB;
+font-style: inherit;">mutate</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">vars</span>(<span class="st" style="color: #20794D;
+font-style: inherit;">across</span>(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">`</span><span class="at" style="color: #657422;
 background-color: null;
@@ -7031,9 +7013,7 @@ font-style: inherit;">`</span><span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">Journal Impact Factor</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">`</span>), <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">funs</span>(as.numeric))</span></code></pre></div>
+font-style: inherit;">`</span>, as.numeric))</span></code></pre></div>
 </div>
 <p>The dataset uses “n/a” instead of R’s NA, therefore some tidying is required. Because n/a is recognised as a character, we also need to turn some of the character columns to numeric. I will be doing some data wrangling later but for now this suits our needs.</p>
 <p>The dataset does have a few limitations: InCites only lists the first five authors of each paper, limiting the analysis on authorship. Also, research area categories are provided by the InCites database and, unfortunately, I do not have information about how they are assigned.</p>
@@ -7041,31 +7021,93 @@ font-style: inherit;">funs</span>(as.numeric))</span></code></pre></div>
 <section id="publishing-throughout-the-years" class="level2">
 <h2 class="anchored" data-anchor-id="publishing-throughout-the-years">Publishing throughout the years</h2>
 <p>Lithuania has gained independence in 1990 and LSMU has merged with the Veterinary academy in 2010. What is the distribution of papers throughout the years?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Interestingly, in 1990 there were no major shifts and up until 1999 the rate of publication had been stable. I couldn’t find a clear explanation as to why the rate started increasing - my best guess is that around 1999, international exchange (such as Erasmus) programs had just started. As researchers, doctors and students travelled abroad to work or study, they either gained experience that enabled to conduct research or they established relationships with Western Europe that would facilitate publication.</p>
 <p>The period of 2008-2011 is interesting - the number of publications increased despite the financial crisis. In 2010, LSMU (formerly, KMU) merged with the Lithuanian Veterinary Academy, could the merger be masking a decrease in the number of publications? Luckily, the dataset contains information about the research area of the publication. And as for 2018, the year seems to be slow compared to the previous year.</p>
 <p>Here is a plot with veterinary sciences separated from the rest of the papers:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>I needed to use grepl because each paper is assigned multiple research areas. The dip we saw previously does seem larger! Let’s see how this tendency is reflected in different research areas. To do that, I will use dplyr’s separate and gather commands – absolutely indispensable when working with character vectors.</p>
 </section>
 <section id="which-research-areas-are-thriving" class="level2">
 <h2 class="anchored" data-anchor-id="which-research-areas-are-thriving">Which research areas are thriving?</h2>
 <p>There are a lot of research area categories - certainly not enough to plot them elegantly! Let’s try limiting it to the categories that have 150 or more publications.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>It does seem cardiac sciences have a similar distribution compared to the overall publication distribution. After tinkering around with plots and failing to find the root cause of the dip, the question is, whose research output decreased the most?</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Yeah, we can see cardiovascular sciences and engineering took the biggest hit, however, some of the research areas have produced more papers! I could probably investigate this further by building a linear model and then checking residuals, but this is fine as it is.</p>
 </section>
 <section id="quality-over-quantity" class="level2">
 <h2 class="anchored" data-anchor-id="quality-over-quantity">Quality over quantity?</h2>
 <p>It is pretty evident that the volume of research has increased throughout the years and will probably keep increasing to a certain point. Of course, quality does not equal quantity and in the age of “publish or perish”, it would be interesting to check whether researchers publish more papers at the cost of quality.</p>
 <p>First, it’s interesting to note that almost half (45.32%) of all research papers do not get cited at all:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>It would be interesting to check how this distribution compares to other universities, but I think that is a question left for another day. Of course, citations cannot solely be used to make decisions about the quality of research. One of the drawbacks is that new papers are very likely to be uncited for a couple of years. Furthermore, really old papers have the misfortune of not appearing in PubMed searches.</p>
 <p>Instead of using the number of citations as a metric, I will use InCites’ “<a href="http://ipscience-help.thomsonreuters.com/inCites2Live/4361-TRS.html">Percentile in Subject Area</a>”, which shows the relative position of your paper compared to those in the same field. Also, I am going to take the year of publication into account so that we can see how publishing changed over time.</p>
-<p>To combine all of this, let’s use gganimate! I am going to label the largest research areas in the graph - labelling all of them would clutter the plot!</p>
-<p>I inversed the percentiles in the plot - the 100th percentile is what every paper should be aiming for and the 0th percentile indicates that a paper has not been cited yet. It’s interesting to see small categories fade in and out of the plot. The plot also shows which areas suffer from publication bloat. In spite of that, around 2017, the quality of cardiovascular and public health papers increased slightly! Also, one of the bigger categories to uphold a higher percentile value is gastroenterology – kudos to them! Overall, the plot looks promising - even though the university produces research that gets outranked by other universities, over time, a lot of the categories have had their percentiles increase.</p>
+<p>The plot below shows the cumulative number of papers (x axis) against the cumulative average percentile in the subject area (y axis) for each research area, at the latest available year. The largest research areas are labelled:</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I inversed the percentiles in the plot - the 100th percentile is what every paper should be aiming for and the 0th percentile indicates that a paper has not been cited yet. The plot shows which areas suffer from publication bloat. Overall, the plot looks promising - even though the university produces research that gets outranked by other universities, a lot of the categories have had their percentiles increase over time.</p>
 </section>
 <section id="who-works-with-whom" class="level2">
 <h2 class="anchored" data-anchor-id="who-works-with-whom">Who works with whom?</h2>
 <p>Since the publications have authors listed alongside in the data, I would like to know whether research groups work independently or cooperate with other groups. Unfortunately, InCites provides only the first 5 authors of each paper. Obviously, this means that we lose any information about authors who are credited after the fifth author. But more importantly, usually papers list the supervisor as the last author. This means that some of the most important connections between authors may become lost. This may cause some of the author clusters to be isolated when in fact they are connected by someone. <em>Finally</em>, I have added a threshold of 4 publications to show common authorship. Adding more produced a highly interconnected plot that was hard to parse. With these caveats in mind, let’s look at clusters of authors!</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://alaburda.github.io/posts/2018/analysing-lsmu-publications/analysing-lsmu-publications_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="960"></p>
+</figure>
+</div>
+</div>
+</div>
 <p>Luckily, the clusters are not completely isolated, suggesting that research teams do collaborate at the university. It’s interesting to see which research groups work together – an obvious example that is reflected in the plot is pulmonology, allergology and laryngology. In certain clusters, it is pretty easy to see department heads because they are in the center of their respective clusters. Also, some teams do seem to work independently, however I wouldn’t make any conclusions based on the limitations of the dataset and the plot. Nonetheless, we did get some insights from the visualisation!</p>
-<p>The plot was built using highcharter - I have tried to initially use plotly to make it interactive, however, coding in highcharter proved to be more convenient. Also, since each paper has multiple research areas, so too does each author have multiple areas. I have kept the research area in which an author has produced the most publications.</p>
 </section>
 <section id="in-conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="in-conclusion">In conclusion</h2>
@@ -7111,7 +7153,7 @@ font-style: inherit;">funs</span>(as.numeric))</span></code></pre></div>
 
  ]]></description>
   <guid>https://alaburda.github.io/posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html</guid>
-  <pubDate>Sun, 08 Feb 2026 07:42:07 GMT</pubDate>
+  <pubDate>Sun, 08 Feb 2026 08:09:50 GMT</pubDate>
 </item>
 </channel>
 </rss>
