@@ -27,6 +27,7 @@ library(RColorBrewer)
 library(knitr)
 library(lubridate)
 library(ggrepel)
+library(highcharter)
 
 data <- read_csv("data/LSMU_publication_history.csv")
 
@@ -234,6 +235,13 @@ ggraph(wc, layout = "fr") +
   geom_node_text(aes(label = name), size = 2, repel = TRUE, max.overlaps = 15) +
   theme_void() +
   labs(title = "Author collaboration network (co-authorship > 4 papers)")
+```
+
+Here's an interactive version of the same network -- hover over nodes to see the author names and drag them around:
+
+```{r, echo = F, warning = F, message = F}
+
+hchart(wc, layout = layout_with_fr)
 ```
 
 Luckily, the clusters are not completely isolated, suggesting that research teams do collaborate at the university. It's interesting to see which research groups work together -- an obvious example that is reflected in the plot is pulmonology, allergology and laryngology. In certain clusters, it is pretty easy to see department heads because they are in the center of their respective clusters. Also, some teams do seem to work independently, however I wouldn't make any conclusions based on the limitations of the dataset and the plot. Nonetheless, we did get some insights from the visualisation!
