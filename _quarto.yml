@@ -9,20 +9,27 @@ website:
   title: "Paulius Alaburda"
   site-url: "https://alaburda.github.io"
   navbar:
+    background: dark
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
       - href: blog.qmd
         text: Blog
       - href: talks.qmd
         text: Talks
+      - href: about.qmd
+        text: About
+  page-footer:
+    center: "© 2018–2026 Paulius Alaburda · Built with [Quarto](https://quarto.org)"
 
 format:
   html:
-    theme: cosmo
-    css: styles.css
+    theme:
+      light: [flatly, styles.css]
+      dark: [darkly, styles.css]
     toc: true
+    code-overflow: wrap
+    highlight-style: github
 
 
 

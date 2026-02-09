@@ -10,7 +10,7 @@
 <atom:link href="https://alaburda.github.io/talks.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.52</generator>
-<lastBuildDate>Sun, 08 Feb 2026 08:10:43 GMT</lastBuildDate>
+<lastBuildDate>Mon, 09 Feb 2026 21:52:45 GMT</lastBuildDate>
 <item>
   <title>I Love DuckDB</title>
   <link>https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html</link>
@@ -26,7 +26,7 @@
 
  ]]></description>
   <guid>https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html</guid>
-  <pubDate>Sun, 08 Feb 2026 08:10:43 GMT</pubDate>
+  <pubDate>Mon, 09 Feb 2026 21:52:45 GMT</pubDate>
 </item>
 </channel>
 </rss>

@@ -1,1 +1,144 @@
-/* css styles */
+/*-- scss:defaults --*/
+
+/*-- scss:rules --*/
+
+/* ── Typography & General ────────────────────────── */
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.7;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ── Navbar ──────────────────────────────────────── */
+
+.navbar {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+}
+
+.navbar-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+/* ── Hero / Landing page ─────────────────────────── */
+
+.hero-section {
+  text-align: center;
+  padding: 4rem 1rem 3rem 1rem;
+}
+
+.hero-section h1 {
+  font-size: 2.6rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+
+.hero-section .lead {
+  font-size: 1.2rem;
+  opacity: 0.85;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.hero-links {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.hero-links a {
+  display: inline-block;
+  padding: 0.5rem 1.4rem;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero-links a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.hero-links .btn-primary {
+  background-color: #2c7be5;
+  color: #fff;
+}
+
+.hero-links .btn-outline {
+  border: 2px solid #2c7be5;
+  color: #2c7be5;
+}
+
+/* ── Blog listing ────────────────────────────────── */
+
+.quarto-listing .listing-title {
+  font-weight: 700;
+}
+
+.quarto-listing .listing-description {
+  opacity: 0.8;
+}
+
+/* ── Post content ────────────────────────────────── */
+
+article {
+  max-width: 48rem;
+}
+
+article img {
+  border-radius: 6px;
+}
+
+blockquote {
+  border-left: 4px solid #2c7be5;
+  padding-left: 1rem;
+  font-style: italic;
+  opacity: 0.9;
+}
+
+/* ── Code blocks ─────────────────────────────────── */
+
+pre.sourceCode {
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.88rem;
+}
+
+code {
+  font-size: 0.9em;
+}
+
+/* ── Footer ──────────────────────────────────────── */
+
+.nav-footer {
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* ── Smooth transitions ─────────────────────────── */
+
+a {
+  transition: color 0.15s ease;
+}
+
+/* ── Responsive tweaks ──────────────────────────── */
+
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+  .hero-section .lead {
+    font-size: 1.05rem;
+  }
+}
