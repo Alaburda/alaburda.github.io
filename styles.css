@@ -14,10 +14,19 @@
 
 html {
 	scroll-behavior: smooth;
+	/* Root carries the flat page colour so the canvas never shows a seam. */
+	background-color: var(--site-bg);
 }
 
 body {
-	background: linear-gradient(180deg, #fcfbf8 0%, var(--site-bg) 100%);
+	/* Single top-of-page wash that settles into --site-bg.
+	   Must stay no-repeat with an explicit size: a gradient on <body>
+	   propagates to the canvas and is sized to the <html> box (one
+	   viewport), so the default `repeat` tiles it down long pages. */
+	background-color: var(--site-bg);
+	background-image: linear-gradient(180deg, #fcfbf8 0%, var(--site-bg) 100%);
+	background-repeat: no-repeat;
+	background-size: 100% 100vh;
 	color: var(--site-ink);
 	font-family: 'Source Serif 4', Georgia, serif;
 	font-size: 1.08rem;
