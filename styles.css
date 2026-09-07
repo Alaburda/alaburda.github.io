@@ -1,8 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Source+Serif+4:wght@400;600;700&display=swap');
 
 :root {
-	--site-bg: #f6f3ed;
-	--site-paper: #fbfaf7;
+	/* The page plane is white so figures sit on it seamlessly: every
+	   ggplot/knitr PNG is rendered with an opaque #ffffff background,
+	   and tinting the plots instead would follow them into talks and
+	   papers. Warmth lives in the accent, borders, code and callouts. */
+	--site-bg: #ffffff;
+	--site-paper: #ffffff;
+	--site-warm: #f7f3ec;
 	--site-ink: #1f1a17;
 	--site-muted: #5f564d;
 	--site-border: #d7d0c5;
@@ -14,19 +19,14 @@
 
 html {
 	scroll-behavior: smooth;
-	/* Root carries the flat page colour so the canvas never shows a seam. */
 	background-color: var(--site-bg);
 }
 
 body {
-	/* Single top-of-page wash that settles into --site-bg.
-	   Must stay no-repeat with an explicit size: a gradient on <body>
-	   propagates to the canvas and is sized to the <html> box (one
-	   viewport), so the default `repeat` tiles it down long pages. */
+	/* Flat, not a gradient. A gradient on <body> propagates to the canvas
+	   and is sized to the <html> box (one viewport), so it tiles down long
+	   pages unless given no-repeat and an explicit size. Keep this flat. */
 	background-color: var(--site-bg);
-	background-image: linear-gradient(180deg, #fcfbf8 0%, var(--site-bg) 100%);
-	background-repeat: no-repeat;
-	background-size: 100% 100vh;
 	color: var(--site-ink);
 	font-family: 'Source Serif 4', Georgia, serif;
 	font-size: 1.08rem;
@@ -101,7 +101,7 @@ pre,
 
 pre,
 div.sourceCode {
-	background: #f1ece5;
+	background: #f5f1ea;
 	border: 1px solid var(--site-border);
 	border-radius: 0;
 	box-shadow: none;
@@ -112,6 +112,14 @@ div.sourceCode {
 pre code,
 .sourceCode code {
 	color: inherit;
+}
+
+/* Quarto's header is `position: fixed` (headroom), so it must be opaque -
+   with a transparent background the article scrolls visibly through it. */
+header#quarto-header,
+header#quarto-header.headroom--pinned,
+header#quarto-header.fixed-top {
+	background: var(--site-bg);
 }
 
 .navbar {
@@ -284,7 +292,7 @@ body:has(.page-intro) #title-block-header {
 }
 
 .listing-item-img-placeholder {
-	background: #ece5db;
+	background: #f0ebe2;
 	border: 1px solid var(--site-border);
 }
 
@@ -338,7 +346,7 @@ body:has(.page-intro) #title-block-header {
 }
 
 .callout {
-	background: #f3eee7;
+	background: var(--site-warm);
 	border-left: 3px solid var(--site-accent);
 	border-radius: 0;
 	padding: 0.9rem 1rem;
