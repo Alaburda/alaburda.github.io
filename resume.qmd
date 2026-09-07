@@ -1,7 +1,7 @@
 ---
 title: "Resume"
 pagetitle: "Paulius Alaburda — Resume"
-description-meta: "Data Analytics Manager in energy: data platform teams, data governance, data products, and analytics engineering."
+description-meta: "Head of Data Analytics in energy: data platform teams, data governance, data products, and analytics engineering."
 page-layout: full
 toc: false
 format:
@@ -14,7 +14,7 @@ format:
     margin:
       x: 1.5cm
       y: 1.5cm
-    mainfont: "DejaVu Sans Mono"
+    mainfont: "Source Sans 3"
 ---
 
 ::: {.cv-head}
@@ -43,15 +43,20 @@ Vilnius, Lithuania
 
 ## Summary
 
-Data Analytics Manager with experience in growing teams, developing novel data products and driving business value through data solutions. I specialise in data warehousing, data governance and end-to-end data solutions. I love ensuring that data teams work on the right things and seize opportunities, all while setting a high bar for quality. I'm comfortable across the whole path from raw data to the final report or data tool. I write publicly at [High SQL](https://highsql.substack.com) as well as [alaburda.github.io](https://alaburda.github.io).
+Head of Data Analytics with experience in growing teams, developing novel data products and driving business value through data solutions. I specialise in data warehousing, data governance and end-to-end data solutions. I love ensuring that data teams work on the right things and seize opportunities, all while setting a high bar for quality. I'm comfortable across the whole path from raw data to the final report or data tool. I write publicly at [High SQL](https://highsql.substack.com) as well as [alaburda.github.io](https://alaburda.github.io).
 
 ## Experience
 
-### Data Analytics Manager - Ignitis
+### Head of Data Analytics - Ignitis
 
 ::: {.cv-meta}
 2021 November – present · Vilnius, Lithuania
 :::
+
+Own the data function for Ignitis Lithuania and Latvia: the data platform and
+warehouse, the BI practice, data governance, and the team's structure, hiring and
+roadmap. Accountable for turning business demand into data products and for the
+standards the organisation's reporting rests on.
 
 - Scaled a team of 5 data analysts to a data platform team of 18 people, consisting of Data Engineers, Data Analysts, Data Stewards and Data Scientists
 - Drove Power BI adoption across Ignitis Lithuania and Latvia, resulting in virtually the whole organisation relying on data reports on a daily basis
@@ -68,7 +73,8 @@ Data Analytics Manager with experience in growing teams, developing novel data p
 April 2021 – November 2021 · Vilnius, Lithuania
 :::
 
-Worked on retail customer analytics. In addition to previous responsibilities, I was responsible for backlog management and delegating work to two direct reports.
+Retail customer analytics, alongside backlog management and delegating work to
+two direct reports.
 
 ### Data Analyst - Ignitis
 
@@ -76,7 +82,12 @@ Worked on retail customer analytics. In addition to previous responsibilities, I
 2019 – 2021 · Vilnius, Lithuania
 :::
 
-Worked on meeting business reporting needs by developing Power BI dashboards, combining data from multiple sources (SQL databases and API endpoints), and creating ETL pipelines with R, Python and Power Automate. I have also introduced version control to start versioning our codebase and built an internal R library to facilitate routine work.
+Met the business's reporting needs: built and maintained Power BI dashboards,
+combined data from SQL databases and API endpoints, and ran ETL pipelines in R,
+Python and Power Automate.
+
+- Introduced version control to the team and put the analytical codebase under versioning
+- Built an internal R library that packaged routine analytical work into reusable functions
 
 ### Data Analyst - Aon
 
@@ -84,9 +95,12 @@ Worked on meeting business reporting needs by developing Power BI dashboards, co
 2018 – 2019 · Chicago, United States · Internship, Global Claims team
 :::
 
-- Built ETL pipelines and quality control tooling in R for global claims data.
-- Maintained the team's internal SQL Server instance.
-- Created interactive Tableau dashboards for claims reporting.
+Supported the Global Claims team with data preparation, quality control and
+reporting across global claims data.
+
+- Built ETL pipelines and quality control tooling in R for global claims data
+- Maintained the team's internal SQL Server instance
+- Created interactive Tableau dashboards for claims reporting
 
 ## Leadership
 
@@ -98,9 +112,6 @@ Team
 
 Scope
 :   Ignitis Lithuania and Latvia
-
-Hiring
-:   *[How many people have you hired? Do you manage team leads, or all 18 directly?]*
 
 Governance
 :   Established the organisation's data governance program — quality standards,
@@ -150,10 +161,11 @@ Spoken
 2013 – 2018 · Kaunas, Lithuania
 :::
 
-- Performed state-funded cell morphology research and supported analysis on
-  other projects.
-- Co-authored four peer-reviewed journal papers; presented at international
-  conferences.
+Ran cell morphology experiments on state-funded research projects and supported
+analysis across other studies in the institute.
+
+- Co-authored four peer-reviewed journal papers
+- Presented at international conferences
 
 ### Non-formal Biology Teacher · LSMU Gymnasium
 
@@ -161,9 +173,10 @@ Spoken
 2016 – 2019 · Kaunas, Lithuania
 :::
 
-- Coached high-school students for the National and International Biology
-  Olympiad. A student tutored in 2018 won a silver medal at the International
-  Biology Olympiad.
+Coached high-school students preparing for the National and International Biology
+Olympiad.
+
+- A student tutored in 2018 won a silver medal at the International Biology Olympiad
 
 ## Publications
 

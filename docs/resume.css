@@ -1,7 +1,9 @@
-/* Resume page — deliberately plain, dense, monospace.
+/* Resume page — plain and dense, set in a humanist sans.
+   Source Sans 3 is used here and as the Typst mainfont so the HTML and the
+   PDF match, and it parses cleanly in applicant tracking systems.
    Self-contained: does not depend on styles.css. */
 
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 body {
 	--cv-ink: #16130f;
@@ -12,9 +14,16 @@ body {
 
 	background: var(--cv-bg);
 	color: var(--cv-ink);
-	font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
-	font-size: 0.9rem;
-	line-height: 1.55;
+	font-family: 'Source Sans 3', 'Segoe UI', Helvetica, Arial, sans-serif;
+	font-size: 0.95rem;
+	line-height: 1.5;
+}
+
+/* The responsibilities paragraph sits directly after the role's date line;
+   muting it separates "what the job was" from the accomplishment bullets. */
+.cv-meta + p {
+	color: var(--cv-muted);
+	margin-bottom: 0.55rem;
 }
 
 /* --- navbar, restyled to match the plain idiom --- */
