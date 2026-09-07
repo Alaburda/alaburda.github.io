@@ -41,6 +41,14 @@ format:
   html:
     theme: default
     css: styles.css
+    # Quarto's page grid - not the CSS - decides the content lane. Widening
+    # body-width reclaims the dead outer gutters; styles.css then caps the
+    # prose measure so text stays readable while figures, code and tables
+    # use the full lane.
+    grid:
+      body-width: 940px
+      margin-width: 250px
+      sidebar-width: 250px
     toc: true
     code-overflow: wrap
     highlight-style: github

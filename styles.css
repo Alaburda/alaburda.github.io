@@ -13,8 +13,9 @@
 	--site-border: #d7d0c5;
 	--site-accent: #77452b;
 	--site-accent-soft: #efe4d9;
-	--site-content: 48rem;
-	--site-nav: 58rem;
+	--site-lane: 940px;    /* content lane; matches grid.body-width in _quarto.yml */
+	--site-measure: 42rem; /* prose measure (~72 characters) */
+	--site-nav: 940px;
 }
 
 html {
@@ -168,10 +169,75 @@ header#quarto-header.fixed-top {
 	max-width: 100%;
 }
 
-main.content {
-	max-width: var(--site-content);
+/* The padding needs the ID: Quarto ships `#quarto-content > * { padding-top:
+   14px }`, which outranks a plain `main.content` rule and was crushing the
+   article up against the navbar. */
+#quarto-content main.content {
+	max-width: var(--site-lane);
 	margin: 0 auto;
-	padding: 2.5rem 1rem 4rem;
+	padding: 4rem 1.5rem 6rem;
+}
+
+/* Pages with no TOC still get Quarto's empty margin column, which drags the
+   article left of centre. Let those span the full page and re-centre. */
+#quarto-content:not(:has(#quarto-margin-sidebar nav)) main.content {
+	grid-column: page-start / page-end;
+}
+
+/* Prose is capped at a comfortable measure while figures, code, tables and
+   callouts keep the full lane - that is what buys the lane presence without
+   pushing lines past ~72 characters. */
+#quarto-content main.content :is(p, ul, ol, dl, blockquote, h1, h2, h3, h4, h5, h6) {
+	max-width: var(--site-measure);
+}
+
+#quarto-content main.content :is(.cell-output-display, figure, .callout, table, .quarto-listing, .quarto-post, #title-block-header) :is(p, ul, ol, dl, h1, h2, h3, h4, h5, h6) {
+	max-width: none;
+}
+
+/* --- Vertical rhythm. Bootstrap gives paragraphs 1rem against a 1.72
+   line-height, so blocks run together; headings need clearly more space
+   above them than below. --- */
+#quarto-content main.content p,
+#quarto-content main.content ul,
+#quarto-content main.content ol,
+#quarto-content main.content dl {
+	margin-bottom: 1.4em;
+}
+
+#quarto-content main.content li + li {
+	margin-top: 0.4em;
+}
+
+#quarto-content main.content h2 {
+	margin-top: 3.6rem;
+	margin-bottom: 1.1rem;
+}
+
+#quarto-content main.content h3 {
+	margin-top: 2.6rem;
+	margin-bottom: 0.7rem;
+}
+
+#quarto-content main.content :is(div.sourceCode, pre) {
+	margin: 2rem 0;
+}
+
+#quarto-content main.content :is(.cell, figure, .quarto-figure, .cell-output-display) {
+	margin-top: 2.4rem;
+	margin-bottom: 2.4rem;
+}
+
+#quarto-content main.content .callout {
+	margin: 2rem 0;
+}
+
+/* knitr figures are written at 2x (1344px for a 672px box), so letting them
+   fill the wider lane costs no sharpness. Scoped to figure-html so a small
+   inline image is never upscaled. */
+#quarto-content main.content .cell-output-display img[src*="figure-html"] {
+	width: 100%;
+	height: auto;
 }
 
 body.home-page #title-block-header,
@@ -195,7 +261,8 @@ body:has(.page-intro) #title-block-header {
 }
 
 .page-intro h1 {
-	max-width: 14ch;
+	/* Was 14ch, which broke the headline into six stub lines beside a void. */
+	max-width: 22ch;
 }
 
 .eyebrow {
