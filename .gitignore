@@ -6,3 +6,6 @@
 **/*.parquet
 *.parquet
 **/*_cache/*
+# Local working notes (not published)
+linkedin-draft.md
+website-redesign-review.md

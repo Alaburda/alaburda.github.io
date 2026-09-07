@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2024-10-19">
+<meta name="description" content="Data Analytics Manager in energy: data platform teams, data governance, data products, and analytics engineering.">
 
-<title>dbt anti-pattern: dbt docs runs queries with pivot macros – Paulius Alaburda</title>
+<title>Paulius Alaburda — Resume – Paulius Alaburda</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,22 +24,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../../">
-<script src="../../../site_libs/quarto-html/quarto.js"></script>
-<script src="../../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,7 +69,8 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 
 
-<link rel="stylesheet" href="../../../styles.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="resume.css">
 </head>
 
 <body class="nav-fixed">
@@ -79,7 +80,7 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Paulius Alaburda</span>
     </a>
   </div>
@@ -90,27 +91,27 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../index.html"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../blog.html"> 
+    <a class="nav-link" href="./blog.html"> 
 <span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../talks.html"> 
+    <a class="nav-link" href="./talks.html"> 
 <span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../projects.html"> 
+    <a class="nav-link" href="./projects.html"> 
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../resume.html"> 
+    <a class="nav-link active" href="./resume.html" aria-current="page"> 
 <span class="menu-text">Resume</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../about.html"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -121,7 +122,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../../blog.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
+    <a class="nav-link" href="./blog.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -133,31 +134,24 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
-    </div>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="resume.pdf"><i class="bi bi-file-pdf"></i>Typst</a></li></ul></div></div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">dbt anti-pattern: dbt docs runs queries with pivot macros</h1>
+<h1 class="title">Resume</h1>
 </div>
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page-left">
 
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">October 19, 2024</p>
-    </div>
-  </div>
   
     
   </div>
@@ -167,9 +161,173 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>I can’t for the life of me find this documented but apparently queries that use the pivot or unpivot macros are run so that their compiled code becomes available in the catalog.json file. It’s nuts that you have to run the query in order to have its code compiled – that’s just resources burnt into the air! And if the pivot query runs on large amounts of data, that also slows down your data warehouse. Jeez!</p>
+<section id="paulius-alaburda" class="level1 cv-head">
+<h1>Paulius Alaburda</h1>
+<div class="cv-contact">
+<p><a href="mailto:alaburdapaulius@gmail.com">alaburdapaulius@gmail.com</a> · <a href="https://alaburda.github.io">alaburda.github.io</a> · <a href="https://github.com/Alaburda">github.com/Alaburda</a> · <a href="https://www.linkedin.com/in/pauliusalaburda">linkedin.com/in/pauliusalaburda</a> · Vilnius, Lithuania</p>
+</div>
+</section>
+<div class="cv-jump">
+<p><a href="#summary">Summary</a> · <a href="#experience">Experience</a> · <a href="#leadership">Leadership</a> · <a href="#technical">Technical</a> · <a href="#writing-speaking">Writing &amp; Speaking</a> · <a href="#earlier-research-teaching">Earlier</a> · <a href="#education">Education</a></p>
+</div>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>Data Analytics Manager with experience in growing teams, developing novel data products and driving business value through data solutions. I specialise in data warehousing, data governance and end-to-end data solutions. I love ensuring that data teams work on the right things and seize opportunities, all while setting a high bar for quality. I’m comfortable across the whole path from raw data to the final report or data tool. I write publicly at <a href="https://highsql.substack.com">High SQL</a> as well as <a href="https://alaburda.github.io">alaburda.github.io</a>.</p>
+</section>
+<section id="experience" class="level2">
+<h2 class="anchored" data-anchor-id="experience">Experience</h2>
+<section id="data-analytics-manager---ignitis" class="level3">
+<h3 class="anchored" data-anchor-id="data-analytics-manager---ignitis">Data Analytics Manager - Ignitis</h3>
+<div class="cv-meta">
+<p>2021 November – present · Vilnius, Lithuania</p>
+</div>
+<ul>
+<li>Scaled a team of 5 data analysts to a data platform team of 18 people, consisting of Data Engineers, Data Analysts, Data Stewards and Data Scientists</li>
+<li>Drove Power BI adoption across Ignitis Lithuania and Latvia, resulting in virtually the whole organisation relying on data reports on a daily basis</li>
+<li>Established a Data Governance program to increase data quality, reduce time to solving data quality issues and avert issues before changes are deployed</li>
+<li>Established multiple data products in the organisation, including:
+<ul>
+<li>A smart meter API service serving over 900 thousand households at sub-100 ms latency</li>
+<li>A physical address service used by other internal systems as a source of truth</li>
+<li>An internal AI agent helping customer support employees</li>
+</ul></li>
+<li>Drove GitHub Copilot adoption in the organisation by organising trainings and holding a monthly AI Ambassador meetup</li>
+</ul>
+</section>
+<section id="senior-data-analyst---ignitis" class="level3">
+<h3 class="anchored" data-anchor-id="senior-data-analyst---ignitis">Senior Data Analyst - Ignitis</h3>
+<div class="cv-meta">
+<p>April 2021 – November 2021 · Vilnius, Lithuania</p>
+</div>
+<p>Worked on retail customer analytics. In addition to previous responsibilities, I was responsible for backlog management and delegating work to two direct reports.</p>
+</section>
+<section id="data-analyst---ignitis" class="level3">
+<h3 class="anchored" data-anchor-id="data-analyst---ignitis">Data Analyst - Ignitis</h3>
+<div class="cv-meta">
+<p>2019 – 2021 · Vilnius, Lithuania</p>
+</div>
+<p>Worked on meeting business reporting needs by developing Power BI dashboards, combining data from multiple sources (SQL databases and API endpoints), and creating ETL pipelines with R, Python and Power Automate. I have also introduced version control to start versioning our codebase and built an internal R library to facilitate routine work.</p>
+</section>
+<section id="data-analyst---aon" class="level3">
+<h3 class="anchored" data-anchor-id="data-analyst---aon">Data Analyst - Aon</h3>
+<div class="cv-meta">
+<p>2018 – 2019 · Chicago, United States · Internship, Global Claims team</p>
+</div>
+<ul>
+<li>Built ETL pipelines and quality control tooling in R for global claims data.</li>
+<li>Maintained the team’s internal SQL Server instance.</li>
+<li>Created interactive Tableau dashboards for claims reporting.</li>
+</ul>
+</section>
+</section>
+<section id="leadership" class="level2">
+<h2 class="anchored" data-anchor-id="leadership">Leadership</h2>
+<div class="cv-skills">
+<dl>
+<dt>Team</dt>
+<dd>
+18 people across data engineering, analytics, data stewardship, and data science — grown from a team of 5
+</dd>
+<dt>Scope</dt>
+<dd>
+Ignitis Lithuania and Latvia
+</dd>
+<dt>Hiring</dt>
+<dd>
+<em>[How many people have you hired? Do you manage team leads, or all 18 directly?]</em>
+</dd>
+<dt>Governance</dt>
+<dd>
+Established the organisation’s data governance program — quality standards, issue resolution, and pre-deployment checks
+</dd>
+<dt>Enablement</dt>
+<dd>
+Org-wide Power BI practice, GitHub Copilot rollout, monthly AI Ambassador meetup
+</dd>
+</dl>
+</div>
+</section>
+<section id="technical" class="level2">
+<h2 class="anchored" data-anchor-id="technical">Technical</h2>
+<div class="cv-skills">
+<dl>
+<dt>Data</dt>
+<dd>
+PostgreSQL / TimescaleDB, ClickHouse, DuckDB, SQL Server, Microsoft Fabric Lakehouse
+</dd>
+<dt>Languages</dt>
+<dd>
+SQL, R, Python
+</dd>
+<dt>Platform</dt>
+<dd>
+dbt, dimensional modeling, data warehousing, Git
+</dd>
+<dt>BI</dt>
+<dd>
+Power BI, Tableau
+</dd>
+<dt>Spoken</dt>
+<dd>
+Lithuanian (native), English (full professional), French (elementary)
+</dd>
+</dl>
+</div>
+</section>
+<section id="writing-speaking" class="level2">
+<h2 class="anchored" data-anchor-id="writing-speaking">Writing &amp; Speaking</h2>
+<ul>
+<li><strong><a href="https://alaburda.github.io">alaburda.github.io</a></strong> — working notes on SQL patterns, query design, DuckDB, and analytics engineering. Posts on grouping overlapping date ranges, dbt anti-patterns, and window-function shape.</li>
+<li><strong><a href="https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html">I Love DuckDB</a></strong> — talk, 2024.</li>
+<li><strong><a href="https://alaburda.github.io/data-analyst-sql-cookbook/">Data Analyst SQL Cookbook</a></strong> — a collected set of practical SQL techniques for day-to-day analytical work.</li>
+</ul>
+</section>
+<section id="earlier-research-teaching" class="level2">
+<h2 class="anchored" data-anchor-id="earlier-research-teaching">Earlier — Research &amp; Teaching</h2>
+<section id="laboratory-assistant-institute-of-anatomy-lsmu" class="level3">
+<h3 class="anchored" data-anchor-id="laboratory-assistant-institute-of-anatomy-lsmu">Laboratory Assistant · Institute of Anatomy, LSMU</h3>
+<div class="cv-meta">
+<p>2013 – 2018 · Kaunas, Lithuania</p>
+</div>
+<ul>
+<li>Performed state-funded cell morphology research and supported analysis on other projects.</li>
+<li>Co-authored four peer-reviewed journal papers; presented at international conferences.</li>
+</ul>
+</section>
+<section id="non-formal-biology-teacher-lsmu-gymnasium" class="level3">
+<h3 class="anchored" data-anchor-id="non-formal-biology-teacher-lsmu-gymnasium">Non-formal Biology Teacher · LSMU Gymnasium</h3>
+<div class="cv-meta">
+<p>2016 – 2019 · Kaunas, Lithuania</p>
+</div>
+<ul>
+<li>Coached high-school students for the National and International Biology Olympiad. A student tutored in 2018 won a silver medal at the International Biology Olympiad.</li>
+</ul>
+</section>
+</section>
+<section id="publications" class="level2">
+<h2 class="anchored" data-anchor-id="publications">Publications</h2>
+<div class="cv-compact">
+<ul>
+<li><strong>P. Alaburda et al.</strong> (2019) Ultrastructural changes of the human enteric nervous system and interstitial cells of Cajal in diverticular disease. <em>Histology and Histopathology.</em></li>
+<li><strong>A. G. Pauza et al.</strong> (2019) Alterations in enteric calcitonin gene-related peptide in patients with colonic diverticular disease. <em>Autonomic Neuroscience.</em></li>
+<li><strong>N. Pauziene et al.</strong> (2017) Neuroanatomy of the pig cardiac ventricles: a stereomicroscopic, confocal and electron microscope study. <em>The Anatomical Record.</em></li>
+<li><strong>N. Pauziene et al.</strong> (2016) Innervation of the rabbit cardiac ventricles. <em>Journal of Anatomy.</em></li>
+</ul>
+</div>
+</section>
+<section id="education" class="level2">
+<h2 class="anchored" data-anchor-id="education">Education</h2>
+<div class="cv-compact">
+<ul>
+<li><strong>Doctor of Medicine (MD)</strong> — Lithuanian University of Health Sciences, 2012 – 2018. Integrated master’s programme.</li>
+<li><strong>Data Scientist with R Track</strong> — DataCamp, 2019.</li>
+<li><strong>Innovation Associate (Level 1)</strong> — Global Innovation Management Institute, 2019.</li>
+<li><strong>4th and 5th Baltic-Nordic Course on Neuroinformatics</strong> — 2015, 2017.</li>
+</ul>
+</div>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

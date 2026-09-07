@@ -1,9 +1,57 @@
 ---
 title: "About"
+page-layout: full
+toc: false
 ---
 
-About this site
+::: {.page-intro}
 
-```{r}
-1 + 1
-```
+::: {.eyebrow}
+About
+:::
+
+# I write about analytics problems that sit between code, data models, and explanation.
+
+My background spans medicine, statistics, energy, biology, and insurance. I finished medical school in 2018, moved into data work, and stayed there because the mix of logic, communication, and practical problem-solving suited me better.
+
+That background still shapes how I approach technical work: I care about detail, but I also care about whether a result is understandable and useful.
+
+:::
+
+## What I Work On {.section-heading}
+
+::: {.link-list}
+
+- SQL patterns for real-world data problems
+- R for exploratory analysis and reproducible workflows
+- DuckDB and local-first analytical tooling
+- Analytics engineering ideas that improve clarity and maintainability
+- Communication patterns for making technical work easier to trust
+
+:::
+
+## What You Will Find Here {.section-heading}
+
+This website is where I publish working notes on analytics, business intelligence, modeling, and statistical thinking. Some posts are small and tactical. Others are longer walkthroughs meant to show the reasoning, not just the answer.
+
+If you are new here, a good place to start is the [blog archive](blog.qmd) or the [projects page](projects.qmd).
+
+## Background {.section-heading}
+
+My route into data was not linear. That is probably why I tend to enjoy messy edge cases, ambiguous business questions, and topics that cross domain boundaries. I like work that requires both technical execution and careful explanation.
+
+Over time, the site has grown into a record of the problems I keep coming back to: date logic, query design, performance, modeling choices, and the small implementation details that make analytical work either pleasant or fragile.
+
+## Elsewhere {.section-heading}
+
+::: {.link-list}
+
+- [GitHub](https://github.com/Alaburda)
+- [Website source](https://github.com/Alaburda/alaburda.github.io)
+- [RSS feed](blog.xml)
+
+:::
+
+## Now {.section-heading}
+
+Right now, the site is centered on writing that is practical, technical, and reusable. I want the posts here to be the kind of thing worth sending to a colleague because they save time or make an idea click.

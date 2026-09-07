@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="">
-<meta name="description" content="Paulius Alaburda’s blog posts">
+<meta name="description" content="Articles on analytics, SQL, R, and practical data work">
 
-<title>Blog – Paulius Alaburda</title>
+<title>Writing – Paulius Alaburda</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -39,12 +39,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -82,9 +80,9 @@ ul.task-list li input[type="checkbox"] {
     }
 
     const options = {
-      valueNames: ['listing-image','listing-title','listing-date','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] }],
+      valueNames: ['listing-image','listing-title','listing-date','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
       
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
     };
 
     window['quarto-listings'] = window['quarto-listings'] || {};
@@ -132,6 +130,7 @@ window.Quarto = {
 };
 </script>
 
+<link rel="stylesheet" href="styles.css">
 <link rel="alternate" type="application/rss+xml" title="Paulius Alaburda" href="blog.xml" data-external="1"></head>
 
 <body class="nav-fixed">
@@ -157,20 +156,39 @@ window.Quarto = {
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./blog.html" aria-current="page"> 
-<span class="menu-text">Blog</span></a>
+<span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./talks.html"> 
 <span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./projects.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resume.html"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Alaburda/alaburda.github.io"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="./blog.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -179,25 +197,23 @@ window.Quarto = {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(20)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SQL">SQL <span class="quarto-category-count">(4)</span></div><div class="category" data-category="books">books <span class="quarto-category-count">(1)</span></div><div class="category" data-category="data">data <span class="quarto-category-count">(1)</span></div><div class="category" data-category="data science">data science <span class="quarto-category-count">(1)</span></div><div class="category" data-category="data warehouse">data warehouse <span class="quarto-category-count">(1)</span></div><div class="category" data-category="education">education <span class="quarto-category-count">(1)</span></div><div class="category" data-category="excel">excel <span class="quarto-category-count">(1)</span></div><div class="category" data-category="lsmu">lsmu <span class="quarto-category-count">(1)</span></div><div class="category" data-category="pbi">pbi <span class="quarto-category-count">(1)</span></div><div class="category" data-category="r">r <span class="quarto-category-count">(7)</span></div><div class="category" data-category="statistics">statistics <span class="quarto-category-count">(4)</span></div></div></div>
+    
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
+<h1 class="title">Writing</h1>
 </div>
 
 <div>
   <div class="description">
-    Paulius Alaburda’s blog posts
+    Articles on analytics, SQL, R, and practical data work
   </div>
 </div>
 
 
-<div class="quarto-title-meta column-page-left">
+<div class="quarto-title-meta column-page">
 
     
   
@@ -209,27 +225,22 @@ window.Quarto = {
 </header>
 
 
-<div id="listing-blog-listing" class="quarto-listing quarto-listing-container-default">
-<div class="listing-actions-group">
-   <div class="input-group input-group-sm quarto-listing-sort">
-     <span class="input-group-text"><i class="bi bi-sort-down"></i></span>
-     <select id="listing-blog-listing-sort" class="form-select" aria-label="Order By" onchange="window['quarto-listings']['listing-blog-listing'].sort(this.options[this.selectedIndex].value, { order: this.options[this.selectedIndex].getAttribute('data-direction')})">
-       <option value="" disabled="" selected="" hidden="">Order By</option>
-       <option value="index" data-direction="asc">Default</option>
-         <option value="listing-date-sort" data-direction="asc">
-          Date - Oldest
-        </option>
-         <option value="listing-date-sort" data-direction="desc">
-          Date - Newest
-        </option>
-     </select>
-  </div>
+<div class="page-intro">
+<div class="eyebrow">
+<p>Writing</p>
 </div>
+<section id="articles-on-analytics-sql-r-duckdb-and-practical-data-work" class="level1">
+<h1>Articles on analytics, SQL, R, DuckDB, and practical data work</h1>
+<p>The archive leans toward SQL patterns, analytics engineering details, DuckDB, and the implementation edge cases that tend to matter more than they first appear.</p>
+<p>Some posts are compact implementation notes. Others are longer walkthroughs focused on the reasoning, not just the final query.</p>
+</section>
+</div>
+<div id="listing-blog-listing" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
 <div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1741642912125" data-listing-reading-time-sort="1" data-listing-word-count-sort="54">
 <div class="thumbnail">
 <p><a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external"></a></p><a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -251,7 +262,7 @@ window.Quarto = {
 <div class="quarto-post image-right" data-index="1" data-listing-date-sort="1740520800000" data-listing-file-modified-sort="1740583878607" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="606">
 <div class="thumbnail">
 <p><a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external"></a></p><a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -276,7 +287,7 @@ Feb 26, 2025
 <div class="quarto-post image-right" data-index="2" data-categories="SQL" data-listing-date-sort="1737237600000" data-listing-file-modified-sort="1770536514730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="743">
 <div class="thumbnail">
 <p><a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external"></a></p><a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external">
-<p class="card-img-top"><img src="posts\2025\micro-improvement-for-window-functions\micro-improvement-for-window-functions_files\figure-html\unnamed-chunk-2-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img src="posts\2025\micro-improvement-for-window-functions\micro-improvement-for-window-functions_files\figure-html\unnamed-chunk-2-1.png" style="height: 10em;"  class="thumbnail-image card-img"/></p>
 </a><p><a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -306,7 +317,7 @@ Jan 19, 2025
 <div class="quarto-post image-right" data-index="3" data-categories="SQL" data-listing-date-sort="1734213600000" data-listing-file-modified-sort="1737295019682" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="953">
 <div class="thumbnail">
 <p><a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external"></a></p><a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external">
-<p><img loading="lazy" src="./posts/2024/qualifying-events-using-recursive-ctes/img/qualifying-events-using-recursive-ctes.png" class="thumbnail-image" style="height: 12em;"></p>
+<p><img loading="lazy" src="./posts/2024/qualifying-events-using-recursive-ctes/img/qualifying-events-using-recursive-ctes.png" class="thumbnail-image" style="height: 10em;"></p>
 </a><p><a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -336,7 +347,7 @@ Dec 15, 2024
 <div class="quarto-post image-right" data-index="4" data-listing-date-sort="1729544400000" data-listing-file-modified-sort="1770534365852" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="576">
 <div class="thumbnail">
 <p><a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external"></a></p><a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external">
-<p class="card-img-top"><img src="posts\2024\dbt-anti-pattern-using-this\dbt-anti-pattern-using-this_files\figure-html\unnamed-chunk-3-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img src="posts\2024\dbt-anti-pattern-using-this\dbt-anti-pattern-using-this_files\figure-html\unnamed-chunk-3-1.png" style="height: 10em;"  class="thumbnail-image card-img"/></p>
 </a><p><a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -361,7 +372,7 @@ Oct 22, 2024
 <div class="quarto-post image-right" data-index="5" data-listing-date-sort="1729285200000" data-listing-file-modified-sort="1734271842862" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
 <div class="thumbnail">
 <p><a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external"></a></p><a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -386,7 +397,7 @@ Oct 19, 2024
 <div class="quarto-post image-right" data-index="6" data-categories="SQL" data-listing-date-sort="1726952400000" data-listing-file-modified-sort="1770536117983" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="986">
 <div class="thumbnail">
 <p><a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external"></a></p><a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external">
-<p class="card-img-top"><img src="posts\2024\grouping-nonoverlapping-date-ranges\grouping-nonoverlapping-date-ranges_files\figure-html\unnamed-chunk-1-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img src="posts\2024\grouping-nonoverlapping-date-ranges\grouping-nonoverlapping-date-ranges_files\figure-html\unnamed-chunk-1-1.png" style="height: 10em;"  class="thumbnail-image card-img"/></p>
 </a><p><a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -416,7 +427,7 @@ Sep 22, 2024
 <div class="quarto-post image-right" data-index="7" data-categories="SQL" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1770535672831" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="744">
 <div class="thumbnail">
 <p><a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external"></a></p><a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external">
-<p class="card-img-top"><img src="posts\2024\grouping-overlapping-date-ranges\grouping-overlapping-date-ranges_files\figure-html\unnamed-chunk-1-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img src="posts\2024\grouping-overlapping-date-ranges\grouping-overlapping-date-ranges_files\figure-html\unnamed-chunk-1-1.png" style="height: 10em;"  class="thumbnail-image card-img"/></p>
 </a><p><a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -446,7 +457,7 @@ Sep 13, 2024
 <div class="quarto-post image-right" data-index="8" data-categories="R" data-listing-date-sort="1719090000000" data-listing-file-modified-sort="1770489880212" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="15">
 <div class="thumbnail">
 <p><a href="./posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.html" class="no-external"></a></p><a href="./posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -476,7 +487,7 @@ Jun 23, 2024
 <div class="quarto-post image-right" data-index="9" data-categories="pbi" data-listing-date-sort="1719090000000" data-listing-file-modified-sort="1770489880469" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="68">
 <div class="thumbnail">
 <p><a href="./posts/2024/convert-seconds-to-hh-mm-ss-in-dax/convert-seconds-to-hh-mm-ss-in-dax.html" class="no-external"></a></p><a href="./posts/2024/convert-seconds-to-hh-mm-ss-in-dax/convert-seconds-to-hh-mm-ss-in-dax.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2024/convert-seconds-to-hh-mm-ss-in-dax/convert-seconds-to-hh-mm-ss-in-dax.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -506,7 +517,7 @@ Jun 23, 2024
 <div class="quarto-post image-right" data-index="10" data-categories="data warehouse" data-listing-date-sort="1687986000000" data-listing-file-modified-sort="1770489881372" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1155">
 <div class="thumbnail">
 <p><a href="./posts/2023/create-date-dimension/create-date-dimension.html" class="no-external"></a></p><a href="./posts/2023/create-date-dimension/create-date-dimension.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2023/create-date-dimension/create-date-dimension.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -536,7 +547,7 @@ Jun 29, 2023
 <div class="quarto-post image-right" data-index="11" data-categories="r,data science" data-listing-date-sort="1628283600000" data-listing-file-modified-sort="1770492367102" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1939">
 <div class="thumbnail">
 <p><a href="./posts/2021/swift-start-with-wingspan-data/swift-start-with-wingspan-data.html" class="no-external"></a></p><a href="./posts/2021/swift-start-with-wingspan-data/swift-start-with-wingspan-data.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2021/swift-start-with-wingspan-data/swift-start-with-wingspan-data.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -569,7 +580,7 @@ Aug 7, 2021
 <div class="quarto-post image-right" data-index="12" data-categories="books" data-listing-date-sort="1623186000000" data-listing-file-modified-sort="1770492366634" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="499">
 <div class="thumbnail">
 <p><a href="./posts/2021/my-favourite-things-books/my-favourite-things-books.html" class="no-external"></a></p><a href="./posts/2021/my-favourite-things-books/my-favourite-things-books.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2021/my-favourite-things-books/my-favourite-things-books.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -599,7 +610,7 @@ Jun 9, 2021
 <div class="quarto-post image-right" data-index="13" data-categories="excel,data" data-listing-date-sort="1615240800000" data-listing-file-modified-sort="1770492366221" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="659">
 <div class="thumbnail">
 <p><a href="./posts/2021/3-ways-to-turbocharge-your-excel-team/3-ways-to-turbocharge-your-excel-team.html" class="no-external"></a></p><a href="./posts/2021/3-ways-to-turbocharge-your-excel-team/3-ways-to-turbocharge-your-excel-team.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2021/3-ways-to-turbocharge-your-excel-team/3-ways-to-turbocharge-your-excel-team.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -632,7 +643,7 @@ Mar 9, 2021
 <div class="quarto-post image-right" data-index="14" data-categories="r" data-listing-date-sort="1603573200000" data-listing-file-modified-sort="1770492210124" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="363">
 <div class="thumbnail">
 <p><a href="./posts/2020/visualising-ess-data-using-ggplot2-and-tmap/visualising-ess-data-using-ggplot2-and-tmap.html" class="no-external"></a></p><a href="./posts/2020/visualising-ess-data-using-ggplot2-and-tmap/visualising-ess-data-using-ggplot2-and-tmap.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2020/visualising-ess-data-using-ggplot2-and-tmap/visualising-ess-data-using-ggplot2-and-tmap.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -662,7 +673,7 @@ Oct 25, 2020
 <div class="quarto-post image-right" data-index="15" data-categories="r,statistics" data-listing-date-sort="1590440400000" data-listing-file-modified-sort="1770492209619" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="464">
 <div class="thumbnail">
 <p><a href="./posts/2020/log-x-1-and-log-1-x/log-x-1-and-log-1-x.html" class="no-external"></a></p><a href="./posts/2020/log-x-1-and-log-1-x/log-x-1-and-log-1-x.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2020/log-x-1-and-log-1-x/log-x-1-and-log-1-x.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -695,7 +706,7 @@ May 26, 2020
 <div class="quarto-post image-right" data-index="16" data-categories="r,statistics" data-listing-date-sort="1589576400000" data-listing-file-modified-sort="1770492208769" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="367">
 <div class="thumbnail">
 <p><a href="./posts/2020/assumptions-of-the-chi-squared-test/assumptions-of-the-chi-squared-test.html" class="no-external"></a></p><a href="./posts/2020/assumptions-of-the-chi-squared-test/assumptions-of-the-chi-squared-test.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2020/assumptions-of-the-chi-squared-test/assumptions-of-the-chi-squared-test.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -728,7 +739,7 @@ May 16, 2020
 <div class="quarto-post image-right" data-index="17" data-categories="r,statistics" data-listing-date-sort="1589576400000" data-listing-file-modified-sort="1770492209995" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1797">
 <div class="thumbnail">
 <p><a href="./posts/2020/how-to-chi-squared-test/how-to-chi-squared-test.html" class="no-external"></a></p><a href="./posts/2020/how-to-chi-squared-test/how-to-chi-squared-test.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2020/how-to-chi-squared-test/how-to-chi-squared-test.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -761,7 +772,7 @@ May 16, 2020
 <div class="quarto-post image-right" data-index="18" data-categories="r,statistics,education" data-listing-date-sort="1579039200000" data-listing-file-modified-sort="1770492209727" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1580">
 <div class="thumbnail">
 <p><a href="./posts/2020/student-reported-p-values/student-reported-p-values.html" class="no-external"></a></p><a href="./posts/2020/student-reported-p-values/student-reported-p-values.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" style="height: 12em;">&nbsp;</div>
+<div class="listing-item-img-placeholder card-img-top" style="height: 10em;">&nbsp;</div>
 </a><p><a href="./posts/2020/student-reported-p-values/student-reported-p-values.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -797,7 +808,7 @@ Jan 15, 2020
 <div class="quarto-post image-right" data-index="19" data-categories="r,lsmu" data-listing-date-sort="1536526800000" data-listing-file-modified-sort="1770540050189" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2091">
 <div class="thumbnail">
 <p><a href="./posts/2018/analysing-lsmu-publications/analysing-lsmu-publications.html" class="no-external"></a></p><a href="./posts/2018/analysing-lsmu-publications/analysing-lsmu-publications.html" class="no-external">
-<p class="card-img-top"><img src="posts\2018\analysing-lsmu-publications\analysing-lsmu-publications_files\figure-html\unnamed-chunk-2-1.png" style="height: 12em;"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img src="posts\2018\analysing-lsmu-publications\analysing-lsmu-publications_files\figure-html\unnamed-chunk-2-1.png" style="height: 10em;"  class="thumbnail-image card-img"/></p>
 </a><p><a href="./posts/2018/analysing-lsmu-publications/analysing-lsmu-publications.html" class="no-external"></a></p>
 </div>
 <div class="body">
@@ -857,150 +868,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1405,14 +1272,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-      &nbsp;
-    </div>   
+<p>Paulius Alaburda</p>
+</div>   
     <div class="nav-footer-center">
-<p>© 2018–2026 Paulius Alaburda · Built with <a href="https://quarto.org">Quarto</a></p>
-</div>
-    <div class="nav-footer-right">
       &nbsp;
     </div>
+    <div class="nav-footer-right">
+<p><a href="https://github.com/Alaburda/alaburda.github.io">GitHub</a> · <a href="blog.xml">RSS</a></p>
+</div>
   </div>
 </footer>
 

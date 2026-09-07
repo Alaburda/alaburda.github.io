@@ -1,21 +1,73 @@
 ---
 title: "Paulius Alaburda"
-page-layout: custom
+page-layout: full
 section-divs: false
 toc: false
+listing:
+  - id: home-recent
+    contents:
+      - "posts/**/*.qmd"
+    sort: "date desc"
+    fields: [title, date, description, categories]
+    type: default
+    max-items: 8
 ---
 
-::: {.hero-section}
+::: {.home-shell}
 
-# Paulius Alaburda
+::: {.page-intro .home-intro}
 
-::: {.lead}
-Data analyst with a background in energy, statistics, medicine, biology and insurance. I finished medschool in 2018 and pursued a career in data — and to be fair, I never looked back! I believe a great data analyst understands the code they write *and* can explain the results to anyone.
+::: {.eyebrow}
+Paulius Alaburda
 :::
 
-::: {.hero-links}
-[Read the Blog](blog.qmd){.btn-primary}
-[About Me](about.qmd){.btn-outline}
+# Writing about SQL, analytics engineering, DuckDB, and practical data work.
+
+I use this site as a notebook for query patterns, awkward edge cases, data modeling decisions, and the parts of analytics work that are easy to underestimate until they break.
+
+Most of the posts are short, technical, and reusable. They are meant to help with real implementation work, not just describe an idea in the abstract.
+
+My background spans medicine, statistics, energy, biology, and insurance. That mix mostly shows up here as a preference for precise explanations and durable solutions.
+
+::: {.home-actions}
+[Start with the archive](blog.qmd){.home-link}
+[Browse talks](talks.qmd){.home-link}
+[Read about me](about.qmd){.home-link}
+:::
+
+:::
+
+## Start Here {.section-heading}
+
+::: {.feature-list}
+
+### [Grouping Overlapping Date Ranges](posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.qmd)
+
+A step-by-step interval grouping pattern for messy time-based data.
+
+### [Connect to Fabric Lakehouse using R](posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.qmd)
+
+Practical notes on connecting familiar analytical tools to a modern platform stack.
+
+### [Micro-improvement for Window Functions](posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.qmd)
+
+A compact note on query shape, CTEs, and why small structural changes can matter.
+
+:::
+
+## Recent Writing {.section-heading}
+
+::: {#home-recent}
+:::
+
+## Elsewhere {.section-heading}
+
+::: {.link-list}
+
+- [Projects](projects.qmd)
+- [Talks](talks.qmd)
+- [About](about.qmd)
+
 :::
 
 :::

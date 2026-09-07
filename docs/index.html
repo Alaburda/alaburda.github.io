@@ -30,17 +30,17 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,11 +68,70 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
 
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-home-recent .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
 
+    const options = {
+      valueNames: ['listing-title','listing-date','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-home-recent'] = new List('listing-home-recent', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -95,29 +154,50 @@ ul.task-list li input[type="checkbox"] {
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./blog.html"> 
-<span class="menu-text">Blog</span></a>
+<span class="menu-text">Writing</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./talks.html"> 
 <span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./projects.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./resume.html"> 
+<span class="menu-text">Resume</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Alaburda/alaburda.github.io"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="./blog.xml"> <i class="bi bi-rss" role="img" aria-label="RSS Feed">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
-  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-layout-custom page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
+    
 <!-- main -->
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -126,7 +206,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page">
 
     
   
@@ -138,19 +218,227 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="paulius-alaburda" class="hero-section">
-<h1>Paulius Alaburda</h1>
-<div class="lead">
-<p>Data analyst with a background in energy, statistics, medicine, biology and insurance. I finished medschool in 2018 and pursued a career in data — and to be fair, I never looked back! I believe a great data analyst understands the code they write <em>and</em> can explain the results to anyone.</p>
+<div class="home-shell">
+<div class="page-intro home-intro">
+<div class="eyebrow">
+<p>Paulius Alaburda</p>
 </div>
-<div class="hero-links">
-<p><a href="./blog.html" class="btn-primary">Read the Blog</a> <a href="./about.html" class="btn-outline">About Me</a></p>
+<h1 id="writing-about-sql-analytics-engineering-duckdb-and-practical-data-work.">Writing about SQL, analytics engineering, DuckDB, and practical data work.</h1>
+<p>I use this site as a notebook for query patterns, awkward edge cases, data modeling decisions, and the parts of analytics work that are easy to underestimate until they break.</p>
+<p>Most of the posts are short, technical, and reusable. They are meant to help with real implementation work, not just describe an idea in the abstract.</p>
+<p>My background spans medicine, statistics, energy, biology, and insurance. That mix mostly shows up here as a preference for precise explanations and durable solutions.</p>
+<div class="home-actions">
+<p><a href="./blog.html" class="home-link">Start with the archive</a> <a href="./talks.html" class="home-link">Browse talks</a> <a href="./about.html" class="home-link">Read about me</a></p>
 </div>
-</section>
+</div>
+<h2 class="section-heading anchored" id="start-here">Start Here</h2>
+<div class="feature-list">
+<h3 id="grouping-overlapping-date-ranges" class="anchored"><a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html">Grouping Overlapping Date Ranges</a></h3>
+<p>A step-by-step interval grouping pattern for messy time-based data.</p>
+<h3 id="connect-to-fabric-lakehouse-using-r" class="anchored"><a href="./posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.html">Connect to Fabric Lakehouse using R</a></h3>
+<p>Practical notes on connecting familiar analytical tools to a modern platform stack.</p>
+<h3 id="micro-improvement-for-window-functions" class="anchored"><a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html">Micro-improvement for Window Functions</a></h3>
+<p>A compact note on query shape, CTEs, and why small structural changes can matter.</p>
+</div>
+<h2 class="section-heading anchored" id="recent-writing">Recent Writing</h2>
+<div id="listing-home-recent" class="quarto-listing quarto-listing-container-default">
+<div class="list quarto-listing-default">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1741642912125" data-listing-reading-time-sort="1" data-listing-word-count-sort="54">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external">Manager Notes on one on ones</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external">Links</a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external"></a></p><a href="./posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1740520800000" data-listing-file-modified-sort="1740583878607" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="606">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external">Data Ramblings 2025 (part 1)</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external">Over time, my head fills up with ideas about the data world. These ideas are usually ramblings about how the current tooling is lacking capabilities. On the one hand…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2025/data-ramblings-2025-part-1/data-ramblings-2025-part-1.html" class="no-external">
+<div class="listing-date">
+Feb 26, 2025
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="SQL" data-listing-date-sort="1737237600000" data-listing-file-modified-sort="1770536514730" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="743">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external">Micro-improvement for window functions</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
+SQL
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external">A very small change leads to a very small improvement</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.html" class="no-external">
+<div class="listing-date">
+Jan 19, 2025
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="SQL" data-listing-date-sort="1734213600000" data-listing-file-modified-sort="1737295019682" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="953">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external">Qualifying Events Using Recursive CTEs</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
+SQL
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external">And the joys of writing trash SQL code</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2024/qualifying-events-using-recursive-ctes/qualifying-events-using-recursive-ctes.html" class="no-external">
+<div class="listing-date">
+Dec 15, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1729544400000" data-listing-file-modified-sort="1770534365852" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="576">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external">dbt anti-pattern: using {{ this }} directly in incremental refreshes</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external">If you’re using dbt, the recommended default way to build incremental models looks like this:</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.html" class="no-external">
+<div class="listing-date">
+Oct 22, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-listing-date-sort="1729285200000" data-listing-file-modified-sort="1734271842862" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="77">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external">dbt anti-pattern: dbt docs runs queries with pivot macros</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external"></a>
+</div>
+<div class="listing-description">
+<a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external">I can’t for the life of me find this documented but apparently queries that use the pivot or unpivot macros are run so that their compiled code becomes available in the…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2024/dbt-anti-pattern-pivot-macro/dbt-anti-pattern-pivot-macro.html" class="no-external">
+<div class="listing-date">
+Oct 19, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="SQL" data-listing-date-sort="1726952400000" data-listing-file-modified-sort="1770536117983" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="986">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external">Grouping Non-Overlapping Date Ranges</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
+SQL
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external">If you’re a data analyst at a company, it’s VERY likely your company stores some data as a Type 2 slowly-changing dimension. It’s also likely that the way it’s stored may…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.html" class="no-external">
+<div class="listing-date">
+Sep 22, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="SQL" data-listing-date-sort="1726174800000" data-listing-file-modified-sort="1770535672831" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="744">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external">Grouping Overlapping Date Ranges</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external"></a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('SQL'); return false;">
+SQL
+</div>
+</div>
+<div class="listing-description">
+<a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external">It’s pretty straightforward to group rows in <code>SQL</code> if their date ranges are consecutive or have fixed gaps.<sup>1</sup> It’s <em>much</em> harder if you want to group overlapping date ranges. I…</a>
+</div>
+</div>
+<div class="metadata">
+<a href="./posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.html" class="no-external">
+<div class="listing-date">
+Sep 13, 2024
+</div>
+</a>
+</div>
+</div>
+</div>
+<div class="listing-no-matching d-none">
+No matching items
+</div>
+</div>
+<h2 class="section-heading anchored" id="elsewhere">Elsewhere</h2>
+<div class="link-list">
+<ul>
+<li><a href="./projects.html">Projects</a></li>
+<li><a href="./talks.html">Talks</a></li>
+<li><a href="./about.html">About</a></li>
+</ul>
+</div>
+</div>
 
 
 
 
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -171,150 +459,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
-    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
-    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
-    let newTheme = '';
-    if(darkModeDefault) {
-      newTheme = isAlternate ? baseTheme : alternateTheme;
-    } else {
-      newTheme = isAlternate ? alternateTheme : baseTheme;
-    }
-    const changeGiscusTheme = () => {
-      // From: https://github.com/giscus/giscus/issues/336
-      const sendMessage = (message) => {
-        const iframe = document.querySelector('iframe.giscus-frame');
-        if (!iframe) return;
-        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
-      }
-      sendMessage({
-        setConfig: {
-          theme: newTheme
-        }
-      });
-    }
-    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
-    if (isGiscussLoaded) {
-      changeGiscusTheme();
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-      for (const sheetNode of alternateStylesheets) {
-        if (sheetNode.id === "quarto-bootstrap") {
-          toggleBodyColorMode(sheetNode);
-        }
-      }
-    } else {
-      disableStylesheet(alternateStylesheets);
-      toggleBodyColorPrimary();
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-    // Hack to workaround the fact that safari doesn't
-    // properly recolor the scrollbar when toggling (#1455)
-    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
-      manageTransitions("body", false);
-      window.scrollTo(0, 1);
-      setTimeout(() => {
-        window.scrollTo(0, 0);
-        manageTransitions("body", true);
-      }, 40);  
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  const darkModeDefault = false;
-  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-    toggleGiscusIfUsed(toAlternate, darkModeDefault);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } else {
-    toggleColorMode(false);
-  }
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -719,14 +863,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <footer class="footer">
   <div class="nav-footer">
     <div class="nav-footer-left">
-      &nbsp;
-    </div>   
+<p>Paulius Alaburda</p>
+</div>   
     <div class="nav-footer-center">
-<p>© 2018–2026 Paulius Alaburda · Built with <a href="https://quarto.org">Quarto</a></p>
-</div>
-    <div class="nav-footer-right">
       &nbsp;
     </div>
+    <div class="nav-footer-right">
+<p><a href="https://github.com/Alaburda/alaburda.github.io">GitHub</a> · <a href="blog.xml">RSS</a></p>
+</div>
   </div>
 </footer>
 

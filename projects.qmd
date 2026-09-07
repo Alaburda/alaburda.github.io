@@ -1,0 +1,53 @@
+---
+title: "Projects"
+page-layout: full
+toc: false
+---
+
+::: {.page-intro}
+
+::: {.eyebrow}
+Projects
+:::
+
+# A few threads that best represent how I like to work.
+
+This page highlights a smaller set of projects and recurring themes: reusable SQL patterns, maintainable analytics systems, and tooling that reduces unnecessary friction.
+
+:::
+
+::: {.feature-list}
+
+## [Data Analyst SQL Cookbook](https://alaburda.github.io/data-analyst-sql-cookbook/)
+
+A standalone project collecting practical SQL techniques and examples for day-to-day analytical work.
+
+## [Date Range Grouping Techniques](posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.qmd)
+
+Two posts on grouping overlapping and non-overlapping date ranges show the kind of query design problems I enjoy most.
+
+- [Grouping overlapping date ranges](posts/2024/grouping-overlapping-date-ranges/grouping-overlapping-date-ranges.qmd)
+- [Grouping non-overlapping date ranges](posts/2024/grouping-nonoverlapping-date-ranges/grouping-nonoverlapping-date-ranges.qmd)
+
+## [Notes on Maintainable Warehouse Work](posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.qmd)
+
+Posts on dbt patterns, query shape, and implementation details that make analytical systems easier to reason about.
+
+- [dbt anti-pattern: using `this`](posts/2024/dbt-anti-pattern-using-this/dbt-anti-pattern-using-this.qmd)
+- [Micro-improvement for window functions](posts/2025/micro-improvement-for-window-functions/micro-improvement-for-window-functions.qmd)
+
+## [Connecting Tools and Workflows](posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.qmd)
+
+Practical work on how analytical tools fit into modern platform stacks without turning everything into ceremony.
+
+- [Connect to Fabric Lakehouse using R](posts/2024/connect-to-fabric-lakehouse-using-r/connect-to-fabric-lakehouse-using-r.qmd)
+- [Create date dimension](posts/2023/create-date-dimension/create-date-dimension.qmd)
+
+## [I Love DuckDB](talks/2024-05-16-i-love-duckdb.qmd)
+
+Talks are where I compress a topic down to its clearest explanation and most useful examples.
+
+- [DuckDB talk](talks/2024-05-16-i-love-duckdb.qmd)
+- [All talks](talks.qmd)
+
+:::

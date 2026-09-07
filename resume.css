@@ -1,0 +1,327 @@
+/* Resume page — deliberately plain, dense, monospace.
+   Self-contained: does not depend on styles.css. */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+body {
+	--cv-ink: #16130f;
+	--cv-muted: #565049;
+	--cv-rule: #cfc9bf;
+	--cv-bg: #fdfcfa;
+	--cv-width: 52rem;
+
+	background: var(--cv-bg);
+	color: var(--cv-ink);
+	font-family: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+	font-size: 0.9rem;
+	line-height: 1.55;
+}
+
+/* --- navbar, restyled to match the plain idiom --- */
+
+body .navbar {
+	background: transparent;
+	border-bottom: 1px solid var(--cv-rule);
+	padding: 0.8rem 0;
+}
+
+body .navbar-container {
+	max-width: calc(var(--cv-width) + 2rem);
+	margin: 0 auto;
+	padding: 0 1rem;
+}
+
+body .navbar-brand,
+body .navbar-nav .nav-link,
+body .quarto-navbar-tools a {
+	color: var(--cv-muted);
+	font-family: inherit;
+	font-size: 0.84rem;
+	font-weight: 400;
+	letter-spacing: 0.02em;
+}
+
+body .navbar-brand {
+	color: var(--cv-ink);
+	font-weight: 600;
+}
+
+body .navbar-nav .nav-link.active,
+body .navbar-nav .nav-link:hover {
+	color: var(--cv-ink);
+	text-decoration: underline;
+}
+
+/* --- page frame --- */
+
+body main.content {
+	max-width: var(--cv-width);
+	margin: 0 auto;
+	padding: 2.2rem 1rem 3.5rem;
+}
+
+body #title-block-header {
+	display: none;
+}
+
+body a {
+	color: var(--cv-ink);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+}
+
+body a:hover {
+	color: var(--cv-muted);
+}
+
+/* --- masthead --- */
+
+.cv-head {
+	border-bottom: 2px solid var(--cv-ink);
+	padding-bottom: 0.9rem;
+	margin-bottom: 0.4rem;
+}
+
+.cv-head h1 {
+	font-family: inherit;
+	font-size: 1.5rem;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	margin: 0 0 0.35rem;
+	line-height: 1.2;
+}
+
+.cv-tagline {
+	color: var(--cv-muted);
+	margin: 0 0 0.7rem;
+	max-width: 46rem;
+}
+
+.cv-contact {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem 1.1rem;
+	font-size: 0.82rem;
+	color: var(--cv-muted);
+}
+
+/* --- section nav under the masthead --- */
+
+.cv-jump {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 1rem;
+	font-size: 0.8rem;
+	padding: 0.55rem 0;
+	border-bottom: 1px solid var(--cv-rule);
+	margin-bottom: 1.6rem;
+	color: var(--cv-muted);
+}
+
+/* --- Quarto's auto-generated "Other Formats" block (the PDF link) --- */
+
+.quarto-alternate-formats {
+	margin: 0 0 1.4rem;
+}
+
+.quarto-alternate-formats h2 {
+	display: none;
+}
+
+.quarto-alternate-formats ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.quarto-alternate-formats li {
+	margin: 0;
+	font-size: 0.8rem;
+}
+
+.quarto-alternate-formats a {
+	color: var(--cv-muted);
+}
+
+.quarto-alternate-formats a i {
+	margin-right: 0.3rem;
+}
+
+/* --- section headings --- */
+
+body h2 {
+	font-family: inherit;
+	font-size: 0.82rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--cv-ink);
+	border-bottom: 1px solid var(--cv-rule);
+	padding-bottom: 0.3rem;
+	margin: 2.2rem 0 1rem;
+}
+
+/* --- roles --- */
+
+body h3 {
+	font-family: inherit;
+	font-size: 0.94rem;
+	font-weight: 600;
+	margin: 1.4rem 0 0.15rem;
+	line-height: 1.35;
+}
+
+body h3:first-of-type {
+	margin-top: 0;
+}
+
+/* the italic line directly under a role: dates - place */
+.cv-meta {
+	color: var(--cv-muted);
+	font-size: 0.82rem;
+	font-style: normal;
+	margin: 0 0 0.5rem;
+}
+
+body ul {
+	margin: 0 0 0.4rem;
+	padding-left: 1.15rem;
+}
+
+body li {
+	margin-bottom: 0.28rem;
+	color: var(--cv-ink);
+}
+
+body li::marker {
+	color: var(--cv-muted);
+}
+
+/* nested bullets (e.g. data products under a role) sit tighter and lighter */
+body li > ul {
+	margin: 0.28rem 0 0.35rem;
+	padding-left: 1.1rem;
+}
+
+body li > ul > li {
+	color: var(--cv-muted);
+	margin-bottom: 0.18rem;
+}
+
+body p {
+	color: var(--cv-ink);
+}
+
+/* --- skills: definition list, label column + values --- */
+
+.cv-skills dl {
+	display: grid;
+	grid-template-columns: 11rem 1fr;
+	gap: 0.3rem 1rem;
+	margin: 0;
+}
+
+.cv-skills dt {
+	font-weight: 600;
+	color: var(--cv-muted);
+	grid-column: 1;
+}
+
+.cv-skills dd {
+	margin: 0;
+	grid-column: 2;
+	color: var(--cv-ink);
+}
+
+/* --- compact list for publications / certs --- */
+
+.cv-compact li {
+	color: var(--cv-muted);
+	font-size: 0.84rem;
+	margin-bottom: 0.4rem;
+}
+
+.cv-compact li strong {
+	color: var(--cv-ink);
+	font-weight: 500;
+}
+
+/* --- footer --- */
+
+body .nav-footer,
+body footer.footer {
+	background: transparent;
+	border-top: 1px solid var(--cv-rule);
+	color: var(--cv-muted);
+	font-size: 0.8rem;
+	margin-top: 2.5rem;
+}
+
+/* --- responsive --- */
+
+@media (max-width: 767.98px) {
+	body {
+		font-size: 0.86rem;
+	}
+
+	.cv-skills dl {
+		grid-template-columns: 1fr;
+		gap: 0 0;
+	}
+
+	.cv-skills dt {
+		grid-column: 1;
+		margin-top: 0.5rem;
+	}
+
+	.cv-skills dd {
+		grid-column: 1;
+	}
+}
+
+/* --- print: let the browser produce a clean PDF too --- */
+
+@media print {
+	body {
+		background: #fff;
+		font-size: 8.6pt;
+		line-height: 1.4;
+	}
+
+	.navbar,
+	.nav-footer,
+	body footer.footer,
+	.cv-jump,
+	.cv-no-print {
+		display: none !important;
+	}
+
+	body main.content {
+		max-width: none;
+		padding: 0;
+	}
+
+	body h2 {
+		margin: 1.1rem 0 0.5rem;
+	}
+
+	body h3 {
+		margin: 0.7rem 0 0.1rem;
+	}
+
+	body h3,
+	body h2 {
+		break-after: avoid;
+	}
+
+	body li,
+	body h3 + .cv-meta {
+		break-inside: avoid;
+	}
+
+	body a {
+		text-decoration: none;
+	}
+}

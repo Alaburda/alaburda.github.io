@@ -1,20 +1,33 @@
 ---
-title: "Blog"
+title: "Writing"
 author: ""
-description: "Paulius Alaburda's blog posts"
+description: "Articles on analytics, SQL, R, and practical data work"
 page-layout: full
+toc: false
 listing: 
   id: blog-listing
-  categories: true
   feed: true
-  sort-ui: [date]
   sort: "date desc"
   contents:
   - "posts/**/*.qmd"
   fields: [image, title, date, description, categories]
   type: default
-  image-height: "12em"
+  image-height: "10em"
 ---
+
+::: {.page-intro}
+
+::: {.eyebrow}
+Writing
+:::
+
+# Articles on analytics, SQL, R, DuckDB, and practical data work
+
+The archive leans toward SQL patterns, analytics engineering details, DuckDB, and the implementation edge cases that tend to matter more than they first appear.
+
+Some posts are compact implementation notes. Others are longer walkthroughs focused on the reasoning, not just the final query.
+
+:::
 
 ::: {#blog-listing}
 :::

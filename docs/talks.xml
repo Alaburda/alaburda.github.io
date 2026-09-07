@@ -8,9 +8,9 @@
 <title>Paulius Alaburda</title>
 <link>https://alaburda.github.io/talks.html</link>
 <atom:link href="https://alaburda.github.io/talks.xml" rel="self" type="application/rss+xml"/>
-<description></description>
+<description>Talks, demos, and presentations</description>
 <generator>quarto-1.5.52</generator>
-<lastBuildDate>Mon, 09 Feb 2026 21:52:45 GMT</lastBuildDate>
+<lastBuildDate>Mon, 07 Sep 2026 18:06:29 GMT</lastBuildDate>
 <item>
   <title>I Love DuckDB</title>
   <link>https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html</link>
@@ -26,7 +26,7 @@
 
  ]]></description>
   <guid>https://alaburda.github.io/talks/2024-05-16-i-love-duckdb.html</guid>
-  <pubDate>Mon, 09 Feb 2026 21:52:45 GMT</pubDate>
+  <pubDate>Mon, 07 Sep 2026 18:06:29 GMT</pubDate>
 </item>
 </channel>
 </rss>

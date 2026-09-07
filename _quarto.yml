@@ -1,6 +1,9 @@
 project:
   type: website
   output-dir: docs
+  render:
+    - "**/*.qmd"
+    - "!website-redesign-review.md"
 
 execute:
   cache: true
@@ -9,24 +12,35 @@ website:
   title: "Paulius Alaburda"
   site-url: "https://alaburda.github.io"
   navbar:
-    background: dark
+    background: light
     left:
       - href: index.qmd
         text: Home
       - href: blog.qmd
-        text: Blog
+        text: Writing
       - href: talks.qmd
         text: Talks
+      - href: projects.qmd
+        text: Projects
+      - href: resume.qmd
+        text: Resume
       - href: about.qmd
         text: About
+    right:
+      - icon: github
+        href: https://github.com/Alaburda/alaburda.github.io
+        aria-label: GitHub
+      - icon: rss
+        href: blog.xml
+        aria-label: RSS Feed
   page-footer:
-    center: "© 2018–2026 Paulius Alaburda · Built with [Quarto](https://quarto.org)"
+    left: "Paulius Alaburda"
+    right: "[GitHub](https://github.com/Alaburda/alaburda.github.io) · [RSS](blog.xml)"
 
 format:
   html:
-    theme:
-      light: [flatly, styles.css]
-      dark: [darkly, styles.css]
+    theme: default
+    css: styles.css
     toc: true
     code-overflow: wrap
     highlight-style: github

@@ -1,21 +1,32 @@
 ---
 title: "Talks"
+description: "Talks, demos, and presentations"
+page-layout: full
 listing: 
   id: talks-listing
-  categories: true
   feed: true
-  sort-ui: [date]
-  sort: "date"
+  sort: "date desc"
   contents:
   - "talks/!(template|blog-image|references).qmd"
   fields: [title, date, author, description, categories]
-  type: grid
-  grid-columns: 1
+  type: default
   image-height: "12em"
 
 website:
   description: "Blog description"
 ---
+
+::: {.page-intro}
+
+::: {.eyebrow}
+Talks
+:::
+
+# Talks, demos, and presentations
+
+Talks are where I try to compress a topic into its most understandable form without flattening the useful complexity out of it.
+
+:::
 
 ::: {#talks-listing}
 :::

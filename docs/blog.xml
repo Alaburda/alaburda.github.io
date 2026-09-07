@@ -8,7 +8,7 @@
 <title>Paulius Alaburda</title>
 <link>https://alaburda.github.io/blog.html</link>
 <atom:link href="https://alaburda.github.io/blog.xml" rel="self" type="application/rss+xml"/>
-<description>Paulius Alaburda&#39;s blog posts</description>
+<description>Articles on analytics, SQL, R, and practical data work</description>
 <generator>quarto-1.5.52</generator>
 <lastBuildDate>Tue, 25 Feb 2025 22:00:00 GMT</lastBuildDate>
 <item>
@@ -7163,7 +7163,7 @@ font-style: inherit;">`</span>, as.numeric))</span></code></pre></div>
 
  ]]></description>
   <guid>https://alaburda.github.io/posts/undated/manager-notes-on-one-on-ones/manager-notes-on-one-on-ones.html</guid>
-  <pubDate>Mon, 09 Feb 2026 21:51:44 GMT</pubDate>
+  <pubDate>Mon, 07 Sep 2026 18:06:15 GMT</pubDate>
 </item>
 </channel>
 </rss>
