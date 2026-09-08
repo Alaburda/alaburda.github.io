@@ -333,56 +333,35 @@
     "href": "resume.html#summary",
     "title": "Resume",
     "section": "Summary",
-    "text": "Summary\nHead of Data Analytics with experience in growing teams, developing novel data products and driving business value through data solutions. I specialise in data warehousing, data governance and end-to-end data solutions. I love ensuring that data teams work on the right things and seize opportunities, all while setting a high bar for quality. I’m comfortable across the whole path from raw data to the final report or data tool. I write publicly at High SQL as well as alaburda.github.io."
+    "text": "Summary\nHead of Data Analytics in energy. I specialise in data reporting, warehousing, governance and end-to-end data solutions. I love ensuring that data teams work on the right things and seize opportunities, all while setting a high bar for quality."
   },
   {
     "objectID": "resume.html#experience",
     "href": "resume.html#experience",
     "title": "Resume",
     "section": "Experience",
-    "text": "Experience\n\nHead of Data Analytics - Ignitis\n\n2021 November – present · Vilnius, Lithuania\n\nOwn the data function for Ignitis Lithuania and Latvia: the data platform and warehouse, the BI practice, data governance, and the team’s structure, hiring and roadmap. Accountable for turning business demand into data products and for the standards the organisation’s reporting rests on.\n\nScaled a team of 5 data analysts to a data platform team of 18 people, consisting of Data Engineers, Data Analysts, Data Stewards and Data Scientists\nDrove Power BI adoption across Ignitis Lithuania and Latvia, resulting in virtually the whole organisation relying on data reports on a daily basis\nEstablished a Data Governance program to increase data quality, reduce time to solving data quality issues and avert issues before changes are deployed\nEstablished multiple data products in the organisation, including:\n\nA smart meter API service serving over 900 thousand households at sub-100 ms latency\nA physical address service used by other internal systems as a source of truth\nAn internal AI agent helping customer support employees\n\nDrove GitHub Copilot adoption in the organisation by organising trainings and holding a monthly AI Ambassador meetup\n\n\n\nSenior Data Analyst - Ignitis\n\nApril 2021 – November 2021 · Vilnius, Lithuania\n\nRetail customer analytics, alongside backlog management and delegating work to two direct reports.\n\n\nData Analyst - Ignitis\n\n2019 – 2021 · Vilnius, Lithuania\n\nMet the business’s reporting needs: built and maintained Power BI dashboards, combined data from SQL databases and API endpoints, and ran ETL pipelines in R, Python and Power Automate.\n\nIntroduced version control to the team and put the analytical codebase under versioning\nBuilt an internal R library that packaged routine analytical work into reusable functions\n\n\n\nData Analyst - Aon\n\n2018 – 2019 · Chicago, United States · Internship, Global Claims team\n\nSupported the Global Claims team with data preparation, quality control and reporting across global claims data.\n\nBuilt ETL pipelines and quality control tooling in R for global claims data\nMaintained the team’s internal SQL Server instance\nCreated interactive Tableau dashboards for claims reporting"
-  },
-  {
-    "objectID": "resume.html#leadership",
-    "href": "resume.html#leadership",
-    "title": "Resume",
-    "section": "Leadership",
-    "text": "Leadership\n\n\nTeam\n\n18 people across data engineering, analytics, data stewardship, and data science — grown from a team of 5\n\nScope\n\nIgnitis Lithuania and Latvia\n\nGovernance\n\nEstablished the organisation’s data governance program — quality standards, issue resolution, and pre-deployment checks\n\nEnablement\n\nOrg-wide Power BI practice, GitHub Copilot rollout, monthly AI Ambassador meetup"
-  },
-  {
-    "objectID": "resume.html#technical",
-    "href": "resume.html#technical",
-    "title": "Resume",
-    "section": "Technical",
-    "text": "Technical\n\n\nData\n\nPostgreSQL / TimescaleDB, ClickHouse, DuckDB, SQL Server, Microsoft Fabric Lakehouse\n\nLanguages\n\nSQL, R, Python\n\nPlatform\n\ndbt, dimensional modeling, data warehousing, Git\n\nBI\n\nPower BI, Tableau\n\nSpoken\n\nLithuanian (native), English (full professional), French (elementary)"
+    "text": "Experience\n\nHead of Data Analytics - Ignitis\n\nDecember 2021 – present · Vilnius, Lithuania\n\nOwn the data function for Lithuania and Latvia by leading a cross-functional team of data professionals.\n\nGrew the team from 3 data analysts to 18 people, spanning Data Engineers, Data Analysts, Data Stewards and Data Scientists.\nBuilt an internal data platform using Airflow, SQL Server, dbt, and Microsoft Fabric, housing over 80 distinct data sources.\nLed Power BI adoption by creating actionable reports, reaching all business units, with 520 active users.\nEstablished a Data Governance programme to increase data quality and define data ownership.\nCreated multiple data products on the data platform and on Kubernetes, including:\n\nA smart meter API service serving customer-facing systems at subsecond latency;\nA physical address service used by other internal systems as a source of truth;\nAn internal AI agent helping customer support employees;\nA reverse ETL service to capture EV station incidents, resulting in an 80% reduction in client complaints.\n\nDrove GitHub Copilot adoption in the organisation by running workshops and holding a monthly AI Ambassador meetup.\n\n\n\nSenior Data Analyst - Ignitis\n\nApril 2021 – November 2021 · Vilnius, Lithuania\n\nServed reporting needs as well as advanced analytical use cases, and managed the backlog and work of three analysts.\n\nDeveloped ETL pipelines to centralise data and ensure faster turnaround time for new data requests.\nSegmented the client base by combining multiple data sources and applying PCA, resulting in 4 distinct customer profiles that informed client-facing communication.\nCo-authored a Data Governance standard, paving the way for the role of Data Stewards in the organisation.\nInterviewed potential data analysts to backfill the team.\n\n\n\nData Analyst - Ignitis\n\nJuly 2019 – March 2021 · Vilnius, Lithuania\n\nMet reporting and data extraction needs of commercial, finance and wholesale business units using a suite of analytical tools: Power BI, SQL, R, Python and Power Automate.\n\nConducted data operations related to energy deregulation, ensuring accurate and timely regulatory submissions and marketing campaigns.\nIntroduced version control for the team’s codebase to replace shared-drive files and ensure work does not get lost.\nBuilt an internal R library to facilitate data extraction tasks and reduce turnaround time.\n\n\n\nData Analyst - Aon\n\nNovember 2018 – May 2019 · Chicago, United States · Internship sponsored by the Baltic-American Freedom Foundation, Global Claims team\n\nSupported the Global Claims team with data preparation, quality control and reporting across global claims data using R and Tableau."
   },
   {
     "objectID": "resume.html#writing-speaking",
     "href": "resume.html#writing-speaking",
     "title": "Resume",
     "section": "Writing & Speaking",
-    "text": "Writing & Speaking\n\nalaburda.github.io — working notes on SQL patterns, query design, DuckDB, and analytics engineering. Posts on grouping overlapping date ranges, dbt anti-patterns, and window-function shape.\nI Love DuckDB — talk, 2024.\nData Analyst SQL Cookbook — a collected set of practical SQL techniques for day-to-day analytical work."
-  },
-  {
-    "objectID": "resume.html#earlier-research-teaching",
-    "href": "resume.html#earlier-research-teaching",
-    "title": "Resume",
-    "section": "Earlier — Research & Teaching",
-    "text": "Earlier — Research & Teaching\n\nLaboratory Assistant · Institute of Anatomy, LSMU\n\n2013 – 2018 · Kaunas, Lithuania\n\nRan cell morphology experiments on state-funded research projects and supported analysis across other studies in the institute.\n\nCo-authored four peer-reviewed journal papers\nPresented at international conferences\n\n\n\nNon-formal Biology Teacher · LSMU Gymnasium\n\n2016 – 2019 · Kaunas, Lithuania\n\nCoached high-school students preparing for the National and International Biology Olympiad.\n\nA student tutored in 2018 won a silver medal at the International Biology Olympiad"
-  },
-  {
-    "objectID": "resume.html#publications",
-    "href": "resume.html#publications",
-    "title": "Resume",
-    "section": "Publications",
-    "text": "Publications\n\n\nP. Alaburda et al. (2019) Ultrastructural changes of the human enteric nervous system and interstitial cells of Cajal in diverticular disease. Histology and Histopathology.\nA. G. Pauza et al. (2019) Alterations in enteric calcitonin gene-related peptide in patients with colonic diverticular disease. Autonomic Neuroscience.\nN. Pauziene et al. (2017) Neuroanatomy of the pig cardiac ventricles: a stereomicroscopic, confocal and electron microscope study. The Anatomical Record.\nN. Pauziene et al. (2016) Innervation of the rabbit cardiac ventricles. Journal of Anatomy."
+    "text": "Writing & Speaking\n\nHigh SQL — personal technical substack.\nalaburda.github.io — personal technical blog.\nI Love DuckDB — talk at the Business Garden R User Group Meeting, 2024.\nData Analyst SQL Cookbook — a collected set of practical SQL techniques for day-to-day analytical work."
   },
   {
     "objectID": "resume.html#education",
     "href": "resume.html#education",
     "title": "Resume",
     "section": "Education",
-    "text": "Education\n\n\nDoctor of Medicine (MD) — Lithuanian University of Health Sciences, 2012 – 2018. Integrated master’s programme.\nData Scientist with R Track — DataCamp, 2019.\nInnovation Associate (Level 1) — Global Innovation Management Institute, 2019.\n4th and 5th Baltic-Nordic Course on Neuroinformatics — 2015, 2017."
+    "text": "Education\n\n\nDoctor of Medicine (MD) — Lithuanian University of Health Sciences, 2012 – 2018. Integrated master’s programme."
+  },
+  {
+    "objectID": "resume.html#earlier-career",
+    "href": "resume.html#earlier-career",
+    "title": "Resume",
+    "section": "Earlier career",
+    "text": "Earlier career\nBefore data, I spent five years doing research on cell morphology at the Institute of Anatomy, LSMU (2013 – 2018) and co-authored four peer-reviewed papers. Alongside it, I coached high-school students for the Biology Olympiad (2016 – 2019) — a student I tutored won a silver medal internationally in 2018."
   },
   {
     "objectID": "talks/2024-05-16-i-love-duckdb.html",
